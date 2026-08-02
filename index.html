@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gigih Glow - Skincare Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="main-container">
+        
+        <!-- 1. HALAMAN HOME -->
+        <div id="home-screen" class="screen active">
+            <h1>Selamat Datang!</h1>
+            <div class="menu-container">
+                <button class="menu-btn" onclick="switchScreen('review-screen')">Review Skincare</button>
+                <button class="menu-btn" onclick="switchScreen('interview-screen')">Interview Skincare</button>
+            </div>
+            <div class="footer-contacts">
+                <a href="https://wa.me/6285640743667" target="_blank">WhatsApp</a> | 
+                <a href="https://instagram.com/gigih2glow" target="_blank">Instagram</a> | 
+                <a href="mailto:gigihjuang10@gmail.com">Email</a>
+            </div>
+        </div>
+
+        <!-- 2. HALAMAN PILIH KATEGORI REVIEW -->
+        <div id="review-screen" class="screen">
+            <button class="back-btn" onclick="switchScreen('home-screen')">⬅ Kembali</button>
+            <h2>Pilih Kategori Skincare</h2>
+            <div class="category-grid">
+                <button class="category-btn" onclick="openCategory('Facewash')">Facewash</button>
+                <button class="category-btn" onclick="openCategory('Toner')">Toner</button>
+                <button class="category-btn" onclick="openCategory('Serum')">Serum</button>
+                <button class="category-btn" onclick="openCategory('Moisturizer')">Moisturizer</button>
+                <button class="category-btn" onclick="openCategory('Sunscreen')">Sunscreen</button>
+            </div>
+        </div>
+
+        <!-- 3. HALAMAN GRID PRODUK (DINAMIS UNTUK SEMUA KATEGORI) -->
+        <div id="product-list-screen" class="screen">
+            <button class="back-btn" onclick="switchScreen('review-screen')">⬅ Kembali</button>
+            <h2 id="category-title">Koleksi Produk</h2>
+            <div class="product-grid" id="product-container"></div>
+        </div>
+
+        <!-- 4. HALAMAN INTERVIEW KUIS -->
+        <div id="interview-screen" class="screen">
+            <button class="back-btn" onclick="switchScreen('home-screen')">⬅ Kembali</button>
+            <div id="quiz-container"></div>
+        </div>
+
+    </div>
+
+    <!-- MODAL / POP-UP DETAIL PRODUK -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div id="modal-details"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
