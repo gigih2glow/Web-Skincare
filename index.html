@@ -3,64 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Belajar Skincare - Platform Edukasi & Analisa Kulit</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Skincare Assistant</title>
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+       (function(){
+          emailjs.init({
+            publicKey: "PUBLIC_KEY_EMAILJS_KAMU", 
+          });
+       })();
+    </script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #FAF8F5; color: #333; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .app-container { width: 100%; max-width: 420px; background: #FFF; min-height: 100vh; box-shadow: 0 4px 20px rgba(0,0,0,0.08); display: flex; flex-direction: column; position: relative; overflow-x: hidden; padding: 20px; padding-bottom: 30px; }
+        .screen { display: none; flex-direction: column; flex-grow: 1; text-align: center; }
+        .screen.active { display: flex; }
+        h1, h2, h3 { color: #D81B60; margin-bottom: 12px; }
+        p { font-size: 13px; color: #555; line-height: 1.4; margin-bottom: 15px; }
+        .menu-container { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        
+        /* Tombol Utama */
+        .menu-btn { background: #D81B60; color: white; border: 2px solid transparent; padding: 12px 15px; border-radius: 12px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 3px 10px rgba(216,27,96,0.3); text-decoration: none; display: block; text-align: center; }
+        .menu-btn:hover { background: #C2185B; border: 2px solid #880E4F; font-weight: 900; transform: scale(1.02); }
+        .menu-btn:active { transform: scale(0.97); }
+
+        /* Tombol Back di Pojok Kiri Atas */
+        .back-btn-top { align-self: flex-start; background: none; border: none; color: #D81B60; font-size: 14px; font-weight: bold; cursor: pointer; margin-bottom: 10px; padding: 0; }
+        .back-btn-top:hover { text-decoration: underline; }
+
+        .form-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 15px; font-size: 13px; }
+        .trivia-box, .ing-card { background: #FFF0F3; border: 1px solid #F8BBD0; border-radius: 15px; padding: 15px; margin-top: 10px; cursor: pointer; transition: 0.2s; }
+        .ing-card:hover { border: 2px solid #D81B60; font-weight: bold; }
+        
+        .quiz-checkbox-grid { display: flex; flex-direction: column; gap: 8px; text-align: left; }
+        .trivia-btn-container { display: flex; gap: 10px; justify-content: center; }
+        .trivia-btn-true { background: #81C784; color: white; border: none; padding: 12px 25px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .trivia-btn-false { background: #E57373; color: white; border: none; padding: 12px 25px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        
+        /* Modal Pop-up */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+        .modal-content { background-color: #fff; padding: 20px; border-radius: 15px; width: 85%; max-width: 320px; text-align: left; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3); margin: auto; }
+        .close-btn { position: absolute; right: 15px; top: 10px; color: #aaa; font-size: 24px; font-weight: bold; cursor: pointer; }
+        .close-btn:hover { color: #D81B60; }
+
+        /* Kontak Berbentuk Tombol Interaktif */
+        .footer-contact { margin-top: auto; padding-top: 15px; border-top: 1px solid #eee; text-align: center; }
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+        .contact-link { background: #FFF0F3; color: #D81B60; border: 1px solid #F8BBD0; padding: 9px; border-radius: 10px; font-size: 12px; font-weight: bold; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; }
+        .contact-link:hover { background: #D81B60; color: white; }
+    </style>
 </head>
 <body>
 
-    <div class="main-container">
+<div class="app-container">
+    <!-- HOME SCREEN -->
+    <div id="home-screen" class="screen active">
+        <h1 style="margin-top: 10px;">Skincare Assistant</h1>
+        <p>Platform edukasi & analisa kebutuhan kulitmu</p>
         
-        <!-- 1. HALAMAN UTAMA (HOME) -->
-        <div id="home-screen" class="screen active">
-            <h1>Belajar Skincare ✨</h1>
-            <p class="subtitle">Platform edukasi & analisa kebutuhan kulitmu</p>
-            
-            <div class="menu-container">
-                <button class="menu-btn" onclick="switchScreen('analisa-screen')">🔍 Analisa Kulit</button>
-                <button class="menu-btn" onclick="switchScreen('kamus-screen')">📚 Kamus Ingredients</button>
-                <button class="menu-btn" onclick="switchScreen('trivia-screen')">🎮 Trivia Skincare</button>
+        <div id="home-badge-container" style="margin: 15px 0;"></div>
+
+        <div class="menu-container">
+            <button class="menu-btn" onclick="switchScreen('analisa-screen')">Analisa Kulit</button>
+            <button class="menu-btn" onclick="switchScreen('kamus-screen')">Kamus Ingredients</button>
+            <button class="menu-btn" onclick="switchScreen('trivia-screen')">Trivia Skincare</button>
+            <button class="menu-btn" onclick="switchScreen('leaderboard-screen')">Papan Peringkat</button>
+        </div>
+
+        <!-- Tombol Kontak Interaktif -->
+        <div class="footer-contact">
+            <div class="contact-grid">
+                <a href="https://wa.me/6285640743667" target="_blank" class="contact-link">WhatsApp</a>
+                <a href="https://instagram.com/gigih2glow" target="_blank" class="contact-link">Instagram</a>
+                <a href="https://tiktok.com/@gigih2glow" target="_blank" class="contact-link">TikTok</a>
+                <a href="mailto:gigihjuang10@gmail.com" class="contact-link">Email</a>
             </div>
-
-            <div class="footer-contacts">
-                <a href="https://wa.me/6285640743667" target="_blank">WhatsApp</a> | 
-                <a href="https://instagram.com/gigih2glow" target="_blank">Instagram</a> | 
-                <a href="mailto:gigihjuang10@gmail.com">Email</a>
-            </div>
-        </div>
-
-        <!-- 2. HALAMAN ANALISA KULIT -->
-        <div id="analisa-screen" class="screen">
-            <button class="back-btn" onclick="switchScreen('home-screen')">⬅ Kembali</button>
-            <h2>Analisa Kulit Kamu</h2>
-            <div id="analisa-container"></div>
-        </div>
-
-        <!-- 3. HALAMAN KAMUS INGREDIENTS -->
-        <div id="kamus-screen" class="screen">
-            <button class="back-btn" onclick="switchScreen('home-screen')">⬅ Kembali</button>
-            <h2>Kamus Ingredients</h2>
-            <p style="font-size: 13px; text-align: center; color: #666;">Pilih jenis permasalahan kulit untuk mempelajari bahan yang cocok:</p>
-            
-            <div class="category-grid" id="kamus-problem-buttons"></div>
-            <div id="ingredients-list" class="ingredients-grid"></div>
-        </div>
-
-        <!-- 4. HALAMAN TRIVIA SKINCARE -->
-        <div id="trivia-screen" class="screen">
-            <button class="back-btn" onclick="switchScreen('home-screen')">⬅ Kembali</button>
-            <div id="trivia-container"></div>
-        </div>
-
-    </div>
-
-    <!-- MODAL / POP-UP DETAIL INGREDIENT & PRODUK -->
-    <div id="app-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <div id="modal-details"></div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- ANALISA SCREEN -->
+    <div id="analisa-screen" class="screen">
+        <button class="back-btn-top" onclick="switchScreen('home-screen')">← Kembali</button>
+        <h2>Analisa Kulit</h2>
+        <div id="analisa-container"></div>
+    </div>
+
+    <!-- KAMUS SCREEN -->
+    <div id="kamus-screen" class="screen">
+        <button class="back-btn-top" onclick="switchScreen('home-screen')">← Kembali</button>
+        <h2>Kamus Ingredients</h2>
+        <div id="kamus-problem-buttons" class="menu-container" style="gap:6px; margin-bottom: 15px;"></div>
+        <div id="ingredients-list" style="max-height: 350px; overflow-y:auto; text-align: left;"></div>
+    </div>
+
+    <!-- TRIVIA SCREEN -->
+    <div id="trivia-screen" class="screen">
+        <button class="back-btn-top" onclick="switchScreen('home-screen')">← Kembali</button>
+        <h2 id="trivia-secret-title">Trivia Skincare</h2>
+        <div id="trivia-container"></div>
+    </div>
+
+    <!-- LEADERBOARD SCREEN -->
+    <div id="leaderboard-screen" class="screen">
+        <button class="back-btn-top" onclick="switchScreen('home-screen')">← Kembali</button>
+        <h2>Papan Peringkat</h2>
+        <p style="font-size: 12px; color: #666;">Pantau aktivitas dan status online teman-temanmu secara real-time:</p>
+        <div id="leaderboard-list" style="margin-top: 10px; max-height: 300px; overflow-y: auto;"></div>
+    </div>
+</div>
+
+<!-- Modal untuk Kamus -->
+<div id="app-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="document.getElementById('app-modal').style.display='none'">&times;</span>
+        <div id="modal-details" style="font-size: 13px; line-height: 1.5; margin-top: 10px;"></div>
+    </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
