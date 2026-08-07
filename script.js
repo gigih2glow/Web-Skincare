@@ -294,7 +294,7 @@ function showAnalisaResult() {
     const sunscreen = getBestProduct("Sunscreen", analisaData.skinType, analisaData.problems);
     const paketItems = [fw, toner, serum, moist, sunscreen];
 
-    fetch('http://localhost:3000/api/analisa', {
+    fetch('https://web-skincare-production.up.railway.app/api/analisa', {
     method: 'POST',
 
     headers: {
@@ -683,7 +683,7 @@ function submitAnswer(type, val) {
         playSFX('gameOver');
 
 
-        fetch('http://localhost:3000/api/trivia/gameover', {
+        fetch('https://web-skincare-production.up.railway.appapi/trivia/gameover', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -726,7 +726,7 @@ function levelUpSequence() {
         localStorage.setItem('skincare_unlocked_level', triviaState.level);
     }
 
-    fetch('http://localhost:3000/api/leaderboard', {
+    fetch('https://web-skincare-production.up.railway.app/api/leaderboard', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -777,7 +777,7 @@ function initLeaderboard() {
 
     async function loadLeaderboard() {
         try {
-            const response = await fetch('http://localhost:3000/api/leaderboard');
+            const response = await fetch('https://web-skincare-production.up.railway.app/api/leaderboard');
 
             if (!response.ok) {
                 throw new Error('Gagal mengambil leaderboard');
@@ -909,7 +909,7 @@ function initLeaderboard() {
         </div>
     `;
 
-    fetch('http://localhost:3000/api/leaderboard')
+    fetch('https://web-skincare-production.up.railway.app/api/leaderboard')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Gagal mengambil data leaderboard');
@@ -1035,7 +1035,7 @@ function sendHeartbeat() {
 
     if (!nama) return;
 
-    fetch('http://localhost:3000/api/heartbeat', {
+    fetch('https://web-skincare-production.up.railway.app/api/heartbeat', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
