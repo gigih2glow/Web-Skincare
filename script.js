@@ -294,6 +294,35 @@ function showAnalisaResult() {
     const sunscreen = getBestProduct("Sunscreen", analisaData.skinType, analisaData.problems);
     const paketItems = [fw, toner, serum, moist, sunscreen];
 
+    fetch('http://localhost:3000/api/analisa', {
+    method: 'POST',
+
+    headers: {
+        'Content-Type': 'application/json'
+    },
+
+    body: JSON.stringify({
+        nama: analisaData.nama,
+        jenis_kulit: analisaData.skinType,
+        permasalahan_kulit: analisaData.problems.join(', '),
+
+        rekomendasi_produk: [
+            `Facewash: ${fw.nama}`,
+            `Toner: ${toner.nama}`,
+            `Serum: ${serum.nama}`,
+            `Moisturizer: ${moist.nama}`,
+            `Sunscreen: ${sunscreen.nama}`
+        ].join(' | ')
+    })
+})
+.then(response => response.json())
+.then(data => {
+    console.log('✅ Analisa tersimpan:', data);
+})
+.catch(error => {
+    console.error('❌ Gagal mengirim analisa:', error);
+});
+
     let itemsHTML = paketItems.map(item => `
         <div style="background: #FFF0F3; border: 1px solid #F8BBD0; border-radius: 12px; padding: 10px; display: flex; align-items: center; gap: 12px; margin-bottom: 10px; text-align: left;">
             <img src="${item.img}" style="width: 55px; height: 75px; object-fit: cover; border-radius: 8px;" onerror="this.src='https://via.placeholder.com/55x75?text=No+Img'">
@@ -484,6 +513,9 @@ function setTriviaName() {
     const name = document.getElementById('trivia-name-input').value;
     if (name) { 
         triviaState.playerName = name; 
+
+        localStorage.setItem('playerName', triviaState.playerName);
+
         showLevelInfo(1); 
     } else {
         alert("Isi nama dulu dong!");
@@ -649,6 +681,25 @@ function submitAnswer(type, val) {
 
     if (triviaState.lives <= 0) {
         playSFX('gameOver');
+
+
+        fetch('http://localhost:3000/api/trivia/gameover', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        nama: triviaState.playerName,
+        level: triviaState.level
+    })
+})
+.then(response => response.json())
+.then(data => {
+    console.log('💀 Game Over tersimpan:', data);
+})
+.catch(error => {
+    console.error('❌ Gagal menyimpan Game Over:', error);
+});
         document.getElementById('trivia-container').innerHTML = `
             <div class="trivia-box" style="padding: 30px 20px;">
                 <h2 style="font-size:24px;">Game Over!</h2>
@@ -674,6 +725,24 @@ function levelUpSequence() {
     if (triviaState.level > currentUnlocked) {
         localStorage.setItem('skincare_unlocked_level', triviaState.level);
     }
+
+    fetch('http://localhost:3000/api/leaderboard', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        nama: triviaState.playerName,
+        level: triviaState.level
+    })
+})
+.then(response => response.json())
+.then(data => {
+    console.log('✅ Data trivia tersimpan:', data);
+})
+.catch(error => {
+    console.error('❌ Gagal menyimpan data trivia:', error);
+});
     
     const container = document.getElementById('trivia-container');
     
@@ -704,10 +773,294 @@ function levelUpSequence() {
 }
 
 function initLeaderboard() {
-    document.getElementById('leaderboard-list').innerHTML = `<div style="background:#FFF0F3; padding:10px; border-radius:8px; font-size:12px;"><strong>Naisila</strong> - Expert (Online)</div>`;
+    const container = document.getElementById('leaderboard-list');
+
+    async function loadLeaderboard() {
+        try {
+            const response = await fetch('http://localhost:3000/api/leaderboard');
+
+            if (!response.ok) {
+                throw new Error('Gagal mengambil leaderboard');
+            }
+
+            const data = await response.json();
+
+            if (!data.success || !data.players || data.players.length === 0) {
+                container.innerHTML = `
+                    <div style="
+                        background:#FFF0F3;
+                        padding:15px;
+                        border-radius:10px;
+                        text-align:center;
+                        font-size:12px;
+                        color:#888;
+                    ">
+                        Belum ada pemain di leaderboard.
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = data.players.map((player, index) => {
+                let badge = 'Rookie';
+
+                if (player.level >= 3) {
+                    badge = 'Expert';
+                } else if (player.level >= 2) {
+                    badge = 'Middle';
+                }
+
+                const isOnline = player.online_status === 'Online';
+
+                return `
+                    <div style="
+                        display:flex;
+                        justify-content:space-between;
+                        align-items:center;
+                        background:#FFF7F9;
+                        padding:12px;
+                        margin-bottom:8px;
+                        border-radius:10px;
+                    ">
+
+                        <div>
+                            <div style="
+                                font-size:13px;
+                                font-weight:bold;
+                                color:#444;
+                            ">
+                                ${index + 1}. ${player.nama}
+                            </div>
+
+                            <div style="
+                                font-size:11px;
+                                color:#999;
+                                margin-top:3px;
+                            ">
+                                Level ${player.level}
+                            </div>
+                        </div>
+
+                        <div style="text-align:right;">
+                            <div style="
+                                color:#D81B60;
+                                font-size:12px;
+                                font-weight:bold;
+                                margin-bottom:3px;
+                            ">
+                                ${badge}
+                            </div>
+
+                            <div style="
+                                font-size:11px;
+                                color:${isOnline ? '#2E7D32' : '#888'};
+                            ">
+                                ${isOnline ? '🟢 Online' : '⚫ Offline'}
+                            </div>
+                        </div>
+
+                    </div>
+                `;
+            }).join('');
+
+        } catch (error) {
+            console.error('❌ Gagal memuat leaderboard:', error);
+
+            container.innerHTML = `
+                <div style="
+                    background:#FFEBEE;
+                    padding:15px;
+                    border-radius:10px;
+                    text-align:center;
+                    font-size:12px;
+                    color:#C62828;
+                ">
+                    Gagal memuat leaderboard
+                </div>
+            `;
+        }
+    }
+
+    // Langsung ambil data
+    loadLeaderboard();
+
+    // Update leaderboard setiap 2 detik
+    const leaderboardInterval = setInterval(() => {
+        // Hanya update kalau user masih berada di halaman leaderboard
+        const leaderboardScreen =
+            document.getElementById('leaderboard-screen');
+
+        if (
+            leaderboardScreen &&
+            leaderboardScreen.classList.contains('active')
+        ) {
+            loadLeaderboard();
+        } else {
+            // Sudah keluar leaderboard → hentikan interval
+            clearInterval(leaderboardInterval);
+        }
+    }, 2000);
 }
+
+    // Tampilan saat mengambil data
+    container.innerHTML = `
+        <div style="text-align:center; padding:20px; font-size:12px; color:#888;">
+            Memuat leaderboard...
+        </div>
+    `;
+
+    fetch('http://localhost:3000/api/leaderboard')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Gagal mengambil data leaderboard');
+            }
+
+            return response.json();
+        })
+
+        .then(data => {
+            if (!data.success || !data.players || data.players.length === 0) {
+                container.innerHTML = `
+                    <div style="
+                        background:#FFF0F3;
+                        padding:15px;
+                        border-radius:10px;
+                        text-align:center;
+                        font-size:12px;
+                        color:#888;
+                    ">
+                        Belum ada pemain di leaderboard.
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = data.players.map((player, index) => {
+
+                // Menentukan badge berdasarkan level
+                let badge = 'Rookie';
+
+                if (player.level >= 3) {
+                    badge = 'Expert';
+                } else if (player.level >= 2) {
+                    badge = 'Middle';
+                }
+
+                return `
+                    <div style="
+                        display:flex;
+                        justify-content:space-between;
+                        align-items:center;
+                        background:#FFF7F9;
+                        padding:12px;
+                        margin-bottom:8px;
+                        border-radius:10px;
+                    ">
+
+                        <div>
+                            <div style="
+                                font-size:13px;
+                                font-weight:bold;
+                                color:#444;
+                            ">
+                                ${index + 1}. ${player.nama}
+                            </div>
+
+                            <div style="
+                                font-size:11px;
+                                color:#999;
+                                margin-top:3px;
+                            ">
+                                Level ${player.level}
+                            </div>
+                        </div>
+
+                        <div style="
+                            text-align:right;
+                            font-size:12px;
+                        ">
+                            <div style="
+                                color:#D81B60;
+                                font-weight:bold;
+                                margin-bottom:3px;
+                            ">
+                                ${badge}
+                            </div>
+
+                            <div style="
+                                font-size:11px;
+                                color:${player.online_status === 'Online' ? '#2E7D32' : '#888'};
+                            ">
+                                ${player.online_status === 'Online'
+                                    ? '🟢 Online'
+                                    : '⚫ Offline'}
+                            </div>
+                        </div>
+
+                    </div>
+                `;
+            }).join('');
+        })
+
+        .catch(error => {
+            console.error('❌ Gagal memuat leaderboard:', error);
+
+            container.innerHTML = `
+                <div style="
+                    background:#FFEBEE;
+                    padding:15px;
+                    border-radius:10px;
+                    text-align:center;
+                    font-size:12px;
+                    color:#C62828;
+                ">
+                    Gagal memuat leaderboard
+                </div>
+            `;
+        });
+
 
 document.addEventListener('DOMContentLoaded', () => {
     renderHomeBadges();
     checkUpdatePopup();
 });
+
+// ===============================
+// HEARTBEAT ONLINE / OFFLINE
+// ===============================
+
+function sendHeartbeat() {
+    // Ambil nama pemain yang sedang tersimpan
+    const nama = localStorage.getItem('playerName');
+
+    if (!nama) return;
+
+    fetch('http://localhost:3000/api/heartbeat', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ nama: nama })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('🟢 Heartbeat terkirim:', nama);
+        }
+    })
+    .catch(error => {
+        console.error('❌ Heartbeat gagal:', error);
+    });
+}
+
+// Kirim langsung saat web dibuka
+sendHeartbeat();
+
+// Lalu kirim lagi setiap 10 detik
+// Mulai heartbeat 2 detik setelah web dibuka
+setTimeout(() => {
+    sendHeartbeat();
+
+    // Pertahankan status online setiap 2 detik
+    setInterval(sendHeartbeat, 2000);
+}, 2000);
