@@ -17,6 +17,7 @@
     "express": "^5.2.1",
     "mysql2": "^3.23.2",
     "nodemailer": "^9.0.5",
-    "resend": "^6.18.1"
+    "resend": "^6.18.1",
+    "serverless-http": "^4.0.0"
   }
 }
