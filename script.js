@@ -3,7 +3,7 @@
 // ==========================================
 const bgmAudio = new Audio('bgm.mp3'); 
 bgmAudio.loop = true;
-bgmAudio.volume = 0.6; 
+bgmAudio.volume = 0.5; 
 
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 let audioCtx;
@@ -25,12 +25,12 @@ function playTone(freq1, freq2, type, duration) {
         osc.frequency.setValueAtTime(freq1, audioCtx.currentTime);
         if (freq2) osc.frequency.exponentialRampToValueAtTime(freq2, audioCtx.currentTime + duration);
         
-        gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.6, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
         
         osc.start();
         osc.stop(audioCtx.currentTime + duration);
-    } catch(e) { console.log(e); }
+    } catch(e) {}
 }
 
 function playSFX(type) {
@@ -38,7 +38,7 @@ function playSFX(type) {
     if (type === 'click') playTone(800, 800, 'sine', 0.05);
     else if (type === 'correct') playTone(600, 1200, 'sine', 0.25);
     else if (type === 'wrong') playTone(220, 110, 'sawtooth', 0.35);
-    else if (type === 'countdown') playTone(440, 440, 'sine', 0.1);
+    else if (type === 'countdown') playTone(440, 440, 'sine', 0.12);
     else if (type === 'levelUp') {
         playTone(440, 554.37, 'square', 0.15);
         setTimeout(() => playTone(659.25, 880, 'square', 0.35), 150);
@@ -51,7 +51,6 @@ function stopBGM() {
     bgmAudio.currentTime = 0;
 }
 
-// Helper Shuffle Array
 function shuffleArray(array) {
     let arr = [...array];
     for (let i = arr.length - 1; i > 0; i--) {
@@ -62,121 +61,80 @@ function shuffleArray(array) {
 }
 
 // ==========================================
-// DATABASE PRODUK DARI MYSQL
+// 1. DATABASE PRODUK
 // ==========================================
-let skincareDatabase = {
-    Facewash: [],
-    Toner: [],
-    Serum: [],
-    Moisturizer: [],
-    Sunscreen: []
-};
-
-async function loadProductsFromDatabase() {
-    try {
-        const response = await fetch(
-            'https://web-skincare-production.up.railway.app/api/products'
-        );
-
-        const data = await response.json();
-
-        if (!data.success) {
-            throw new Error(data.message || 'Gagal mengambil produk');
-        }
-
-        skincareDatabase = {
-            Facewash: [],
-            Toner: [],
-            Serum: [],
-            Moisturizer: [],
-            Sunscreen: []
-        };
-
-        data.products.forEach(product => {
-            const category = product.kategori;
-
-            const formattedProduct = {
-                id: product.id,
-                img: product.img,
-                nama: product.nama,
-                harga: `${Number(product.harga).toLocaleString('id-ID')}`,
-                ukuran: product.ukuran,
-                cocok: product.cocok
-                    ? product.cocok.split(',').map(item => item.trim().toLowerCase())
-                    : [],
-                ingredients: product.ingredients || '',
-                tekstur: product.tekstur || '',
-                waktu: product.waktu || '',
-                tipe_sunscreen: product.tipe_sunscreen || '',
-                finish: product.finish || ''
-            };
-
-            if (category === 'Face Wash') {
-                skincareDatabase.Facewash.push(formattedProduct);
-            } else if (category === 'Toner') {
-                skincareDatabase.Toner.push(formattedProduct);
-            } else if (category === 'Serum') {
-                skincareDatabase.Serum.push(formattedProduct);
-            } else if (category === 'Moisturizer') {
-                skincareDatabase.Moisturizer.push(formattedProduct);
-            } else if (category === 'Sunscreen') {
-                skincareDatabase.Sunscreen.push(formattedProduct);
-            }
-        });
-
-        console.log('✅ Produk berhasil dimuat dari MySQL:', {
-            Facewash: skincareDatabase.Facewash.length,
-            Toner: skincareDatabase.Toner.length,
-            Serum: skincareDatabase.Serum.length,
-            Moisturizer: skincareDatabase.Moisturizer.length,
-            Sunscreen: skincareDatabase.Sunscreen.length
-        });
-
-    } catch (error) {
-        console.error('❌ Gagal memuat produk dari MySQL:', error);
-    }
-}
-
-loadProductsFromDatabase();
-
-// ==========================================
-// 1. ARSIP DATABASE PRODUK LENGKAP
-// ==========================================
-const oldskincareDatabase = {
+const skincareDatabase = {
     "Facewash": [
         { img: "facewash1.jpg", nama: "Facewash Hanasui Pink", harga: "25rb", ukuran: "60ml", cocok: ["kombinasi", "kusam", "bekas jerawat"], ingredients: "Advance Niacinamide, Genowhite, Mandelic Acid + MULTIVITAMIN", tekstur: "Cream", waktu: "Pagi dan Malam" },
-        { img: "facewash2.jpg", nama: "Facewash Hanasui Hijau", harga: "25rb", ukuran: "60ml", cocok: ["kombinasi", "beruntusan", "berjerawat", "jerawat aktif"], ingredients: "Nano Salicylic Acid, Centella Asiatica, Panthenol + MULTIVITAMIN", tekstur: "Cream", waktu: "Pagi dan Malam" },
-        { img: "facewash3.jpg", nama: "Facewash Hadalabo Putih Gokujyun", harga: "42rb", ukuran: "100ml", cocok: ["kering", "sangat kering"], ingredients: "2 Tipe Hyaluronic Acid", tekstur: "Cream", waktu: "Pagi dan Malam" },
-        { img: "facewash4.jpg", nama: "Facewash Hadalabo Biru Shirojyun", harga: "42rb", ukuran: "100ml", cocok: ["kering", "sangat kering", "bekas jerawat", "kusam"], ingredients: "2 Tipe Hyaluronic Acid, Alpha Arbutin dan Vitamin C", tekstur: "Cream", waktu: "Pagi dan Malam" },
-        { img: "facewash5.jpg", nama: "Facewash Y.O.U Hijau", harga: "36rb", ukuran: "100ml", cocok: ["berminyak", "sangat berminyak", "berjerawat", "jerawat aktif", "beruntusan", "kemerahan", "pori pori"], ingredients: "1,5% Salicylic Acid dan Amino Acid", tekstur: "Gel", waktu: "Pagi dan Malam" },
-        { img: "facewash6.jpg", nama: "Facewash Glamazing Hijau", harga: "36rb", ukuran: "100ml", cocok: ["berminyak", "sangat berminyak", "berjerawat", "jerawat aktif", "beruntusan", "sensitif", "kemerahan", "pori pori"], ingredients: "1% Salicylic Acid dan Panthenol", tekstur: "Gel", waktu: "Pagi dan Malam" },
-        { img: "facewash7.jpg", nama: "Facewash Glad2Glow Hijau", harga: "36rb", ukuran: "70ml", cocok: ["berminyak", "beruntusan", "berjerawat", "jerawat aktif"], ingredients: "Salicylic Acid dan Centella", tekstur: "Gel", waktu: "Pagi dan Malam" }
+        { img: "facewash2.jpg", nama: "Facewash Hanasui Hijau", harga: "25rb", ukuran: "60ml", cocok: ["kombinasi", "beruntusan", "berjerawat"], ingredients: "Nano Salicylic Acid, Centella Asiatica, Panthenol + MULTIVITAMIN", tekstur: "Cream", waktu: "Pagi dan Malam" },
+        { img: "facewash3.jpg", nama: "Facewash Hadalabo Putih Gokujyun", harga: "42rb", ukuran: "100ml", cocok: ["kering"], ingredients: "2 Tipe Hyaluronic Acid", tekstur: "Cream", waktu: "Pagi dan Malam" },
+        { img: "facewash4.jpg", nama: "Facewash Hadalabo Biru Shirojyun", harga: "42rb", ukuran: "100ml", cocok: ["kering", "bekas jerawat", "kusam"], ingredients: "2 Tipe Hyaluronic Acid, Alpha Arbutin dan Vitamin C", tekstur: "Cream", waktu: "Pagi dan Malam" },
+        { img: "facewash5.jpg", nama: "Facewash Y.O.U Hijau", harga: "36rb", ukuran: "100ml", cocok: ["berminyak", "berjerawat", "beruntusan", "pori pori"], ingredients: "1,5% Salicylic Acid dan Amino Acid", tekstur: "Gel", waktu: "Pagi dan Malam" },
+        { img: "facewash6.jpg", nama: "Facewash Glamazing Hijau", harga: "36rb", ukuran: "100ml", cocok: ["berminyak", "berjerawat", "beruntusan", "sensitif", "pori pori"], ingredients: "1% Salicylic Acid dan Panthenol", tekstur: "Gel", waktu: "Pagi dan Malam" },
+        { img: "facewash7.jpg", nama: "Facewash Glad2Glow Hijau", harga: "36rb", ukuran: "70ml", cocok: ["berminyak", "beruntusan", "berjerawat"], ingredients: "Salicylic Acid dan Centella", tekstur: "Gel", waktu: "Pagi dan Malam" },
+        { img: "facewash10.jpeg", nama: "Emina Bright Stuff Facial Wash", harga: "35rb", ukuran: "100ml", cocok: ["kombinasi", "kusam", "berjerawat", "bekas jerawat"], ingredients: "Niacinamide, Allantoin", tekstur: "Cream", waktu: "Pagi dan Malam" },
+        { img: "facewash11.jpeg", nama: "The Originote Low pH Cicamide Facial Cleanser", harga: "42rb", ukuran: "150ml", cocok: ["berminyak", "berjerawat", "beruntusan", "skin barrier rusak", "barrier"], ingredients: "Centella Asiatica, Ceramide", tekstur: "Gel", waktu: "Pagi dan Malam" },
+        { img: "facewash12.jpeg", nama: "Acne Gentle Cleansing Foam Azarine", harga: "35rb", ukuran: "60ml", cocok: ["berminyak", "berjerawat", "beruntusan"], ingredients: "Tea Tree dan Salicylic Acid", tekstur: "Cream", waktu: "Pagi dan Malam" },
+        { img: "facewash13.jpeg", nama: "Facewash Glad2Glow Ungu", harga: "38rb", ukuran: "70ml", cocok: ["kering", "skin barrier rusak", "barrier"], ingredients: "Blueberry Extract dan Ceramide", tekstur: "Gel", waktu: "Pagi dan Malam" },
+        { img: "facewash14.jpeg", nama: "Wardah Facewash Light+", harga: "38rb", ukuran: "100ml", cocok: ["kering", "kusam"], ingredients: "Nano Niacinamide dan Low Molecular Hyaluronic", tekstur: "Gel", waktu: "Pagi dan Malam" }
     ],
+
     "Toner": [
-        { img: "toner1.jpg", nama: "Toner Hanasui Pink", harga: "30rb", ukuran: "105ml", cocok: ["kombinasi", "kusam", "bekas jerawat"], ingredients: "Advance Niacinamide, Genowhite, Mandelic Acid, 8 Hyaluronate + MULTIVITAMIN", tekstur: "Watery", waktu: "Pagi dan Malam" },
-        { img: "toner2.jpg", nama: "Toner Autumn Ungu", harga: "50rb", ukuran: "500ml", cocok: ["kombinasi", "kusam", "bekas jerawat"], ingredients: "5% Niacinamide, Vitamin C, Alpha Arbutin, Tranexamic Acid dan 7x Hyaluronic Complex", tekstur: "Watery", waktu: "Pagi dan Malam" },
-        { img: "toner3.jpg", nama: "Toner Autumn Hijau", harga: "60rb", ukuran: "500ml", cocok: ["kombinasi", "berminyak", "berjerawat", "jerawat aktif", "beruntusan"], ingredients: "Salicylic Acid dan Centella Asiatica", tekstur: "Watery", waktu: "Malam" }
+        { img: "toner1.jpg", nama: "Toner Hanasui Pink", harga: "30rb", ukuran: "105ml", cocok: ["kombinasi", "kusam", "bekas jerawat"], ingredients: "Advance Niacinamide, Genowhite, Mandelic Acid", tekstur: "Watery", waktu: "Pagi dan Malam" },
+        { img: "toner2.jpg", nama: "Toner Autumn Ungu", harga: "50rb", ukuran: "500ml", cocok: ["kombinasi", "kusam", "bekas jerawat"], ingredients: "5% Niacinamide, Vitamin C, Alpha Arbutin", tekstur: "Watery", waktu: "Pagi dan Malam" },
+        { img: "toner3.jpg", nama: "Toner Autumn Hijau", harga: "60rb", ukuran: "500ml", cocok: ["kombinasi", "berjerawat", "beruntusan"], ingredients: "Salicylic Acid dan Centella Asiatica", tekstur: "Watery", waktu: "Malam" },
+        { img: "toner4.jpeg", nama: "Emina Bright Stuff Toner", harga: "31rb", ukuran: "100ml", cocok: ["kering", "kusam"], ingredients: "Oxybione, 2% Niacinamide", tekstur: "Watery", waktu: "Pagi dan Malam" },
+        { img: "toner5.jpeg", nama: "Glad2Glow Brightening Toner", harga: "45rb", ukuran: "80ml", cocok: ["kering", "kusam"], ingredients: "Pomegranate Extract, Niacinamide", tekstur: "Watery", waktu: "Pagi dan Malam" },
+        { img: "toner6.jpeg", nama: "Wardah Lightening Face Toner", harga: "30rb", ukuran: "125ml", cocok: ["kering", "kusam"], ingredients: "Niacinamide", tekstur: "Watery", waktu: "Pagi dan Malam" },
+        { img: "toner7.jpeg", nama: "The Originote Cica-B5 Soothing Essence Toner", harga: "38rb", ukuran: "80ml", cocok: ["berminyak", "sensitif"], ingredients: "Centella Asiatica, Panthenol", tekstur: "Watery", waktu: "Malam" },
+        { img: "toner8.jpeg", nama: "Azarine MoistureRich Hydrating Toner", harga: "48rb", ukuran: "90ml", cocok: ["kering"], ingredients: "Hyaluronic Acid", tekstur: "Watery", waktu: "Pagi dan Malam" }
     ],
+
     "Serum": [
-        { img: "serum1.jpg", nama: "Serum Hanasui Brightening", harga: "30rb", ukuran: "20ml", cocok: ["kombinasi", "kusam", "bekas jerawat"], ingredients: "10% Advanced Niacinamide", tekstur: "Agak Kental", waktu: "Pagi dan Malam (Dianjurkan Pagi)" },
-        { img: "serum2.jpg", nama: "Serum Hanasui Acne", harga: "25rb", ukuran: "20ml", cocok: ["berminyak", "kusam", "berjerawat", "jerawat aktif", "beruntusan", "pori pori"], ingredients: "0,5% Salicylic Acid, Centella Asiatica dan 2% Niacinamide", tekstur: "Agak Kental", waktu: "Malam" },
-        { img: "serum3.jpg", nama: "Serum Hanasui Bakuchiol", harga: "30rb", ukuran: "20ml", cocok: ["kering", "sangat kering", "anti aging"], ingredients: "Bakuchiol", tekstur: "Kental", waktu: "Pagi dan Malam" },
-        { img: "serum4.jpg", nama: "Serum Hanasui MiniPore", harga: "30rb", ukuran: "20ml", cocok: ["berminyak", "pori pori"], ingredients: "NanoActive Salicylic Acid dan Japan Panadoxine", tekstur: "Agak Kental", waktu: "Malam" },
-        { img: "serum5.jpg", nama: "Serum Somethinc Pink", harga: "120rb", ukuran: "20ml", cocok: ["berminyak", "sangat berminyak", "beruntusan", "berjerawat", "jerawat aktif", "komedo", "pori pori"], ingredients: "2% Salicylic Acid", tekstur: "Watery", waktu: "Malam" },
-        { img: "serum6.jpg", nama: "Serum Somethinc Propolis", harga: "120rb", ukuran: "20ml", cocok: ["kering", "sangat kering", "skin barrier rusak", "anti aging"], ingredients: "60% Korean Propolis, Sweden Bee Venom dan Manuka Honey", tekstur: "Kental", waktu: "Pagi dan Malam (Dianjurkan Pagi)" },
-        { img: "serum7.jpg", nama: "Serum Skin1004 Brightening", harga: "250rb", ukuran: "100ml", cocok: ["kombinasi", "kusam", "bekas jerawat"], ingredients: "Niacinamide dan Centella Asiatica", tekstur: "Agak Kental", waktu: "Pagi dan Malam (Dianjurkan Pagi)" }
+        { img: "serum1.jpg", nama: "Serum Hanasui Brightening", harga: "30rb", ukuran: "20ml", cocok: ["kombinasi", "kusam", "bekas jerawat"], ingredients: "10% Advanced Niacinamide", tekstur: "Agak Kental", waktu: "Pagi dan Malam" },
+        { img: "serum2.jpg", nama: "Serum Hanasui Acne", harga: "25rb", ukuran: "20ml", cocok: ["berminyak", "kusam", "berjerawat", "beruntusan", "pori pori"], ingredients: "0,5% Salicylic Acid, Centella Asiatica", tekstur: "Agak Kental", waktu: "Malam" },
+        { img: "serum3.jpg", nama: "Serum Hanasui Bakuchiol", harga: "30rb", ukuran: "20ml", cocok: ["kering"], ingredients: "Bakuchiol", tekstur: "Kental", waktu: "Pagi dan Malam" },
+        { img: "serum4.jpg", nama: "Serum Hanasui MiniPore", harga: "30rb", ukuran: "20ml", cocok: ["berminyak", "pori pori"], ingredients: "NanoActive Salicylic Acid", tekstur: "Agak Kental", waktu: "Malam" },
+        { img: "serum5.jpg", nama: "Serum Somethinc Pink", harga: "120rb", ukuran: "20ml", cocok: ["berminyak", "beruntusan", "berjerawat", "pori pori"], ingredients: "2% Salicylic Acid", tekstur: "Watery", waktu: "Malam" },
+        { img: "serum6.jpg", nama: "Serum Somethinc Propolis", harga: "120rb", ukuran: "20ml", cocok: ["kering", "skin barrier rusak", "barrier"], ingredients: "60% Korean Propolis, Manuka Honey", tekstur: "Kental", waktu: "Pagi dan Malam" },
+        { img: "serum7.jpg", nama: "Serum Skin1004 Brightening", harga: "250rb", ukuran: "100ml", cocok: ["kombinasi", "kusam", "bekas jerawat"], ingredients: "Niacinamide dan Centella Asiatica", tekstur: "Agak Kental", waktu: "Pagi dan Malam" },
+        { img: "serum8.jpeg", nama: "The Originote Hyalu-C Serum", harga: "42rb", ukuran: "20ml", cocok: ["kombinasi", "kusam", "bekas jerawat", "beruntusan", "skin barrier rusak", "barrier"], ingredients: "Vitamin C, Hyaluronic Acid, Niacinamide, Ceramide", tekstur: "Cair", waktu: "Pagi dan Malam" },
+        { img: "serum9.jpeg", nama: "The Originote Niacinamide 10% Serum", harga: "48rb", ukuran: "20ml", cocok: ["kombinasi", "kusam"], ingredients: "Niacinamide 10%, Alpha Arbutin, Glutathione", tekstur: "Cair", waktu: "Pagi dan Malam" },
+        { img: "serum10.jpeg", nama: "Emina Bright Stuff Face Serum", harga: "48rb", ukuran: "30ml", cocok: ["kusam", "kering"], ingredients: "Niacinamide", tekstur: "Cair", waktu: "Pagi dan Malam" },
+        { img: "serum11.jpeg", nama: "Implora Acne Serum", harga: "37rb", ukuran: "20ml", cocok: ["kombinasi", "berjerawat", "beruntusan", "bekas jerawat"], ingredients: "2% Salicylic Acid, Centella Asiatica", tekstur: "Cair", waktu: "Malam" },
+        { img: "serum12.jpeg", nama: "Implora 24k Gold Serum", harga: "35rb", ukuran: "20ml", cocok: ["kering", "bekas jerawat", "kusam"], ingredients: "Niacinamide 5%, Vitamin C, Collagen", tekstur: "Kental", waktu: "Pagi dan Malam" },
+        { img: "serum13.jpeg", nama: "Glad2Glow Serum Pomegranate", harga: "49rb", ukuran: "17ml", cocok: ["kombinasi", "kusam", "beruntusan", "bekas jerawat"], ingredients: "10% Niacinamide, Pomegranate Extract", tekstur: "Agak Kental", waktu: "Pagi dan Malam" },
+        { img: "serum14.jpeg", nama: "Glad2Glow Serum Centella", harga: "47rb", ukuran: "17ml", cocok: ["kombinasi", "berjerawat", "beruntusan", "bekas jerawat", "pori pori"], ingredients: "2% Salicylic Acid, Centella Asiatica", tekstur: "Agak Kental", waktu: "Malam" },
+        { img: "serum15.jpeg", nama: "Glad2Glow Perfect Vitamin C", harga: "42rb", ukuran: "17ml", cocok: ["kombinasi", "kusam", "bekas jerawat"], ingredients: "5 Types Hyaluronic, Ceramide, Panthenol", tekstur: "Agak Kental", waktu: "Pagi dan Malam" }
     ],
+
     "Moisturizer": [
-        { img: "moist1.jpg", nama: "Moisturizer Hanasui Hijau", harga: "38rb", ukuran: "30ml", cocok: ["kering", "skin barrier rusak", "kemerahan", "sensitif", "mencerahkan"], ingredients: "5x Ceramide, Niacinamide dan Hyaluronic Acid", tekstur: "Gel Cream", waktu: "Pagi dan Malam" },
-        { img: "moist2.jpg", nama: "Moisturizer Hanasui Orange", harga: "38rb", ukuran: "30ml", cocok: ["kering", "skin barrier rusak", "mencerahkan", "bekas jerawat", "kusam"], ingredients: "5x Ceramide, 5% Niacinamide dan Tranexamic Acid", tekstur: "Gel", waktu: "Pagi dan Malam" }
+        { img: "moist1.jpg", nama: "Moisturizer Hanasui 10× Ceramide Probiotics", harga: "38rb", ukuran: "30ml", cocok: ["kering", "skin barrier rusak", "barrier", "sensitif"], ingredients: "5× Ceramide, Niacinamide, Hyaluronic Acid", tekstur: "Agak Kental", waktu: "Pagi dan Malam" },
+        { img: "moist2.jpg", nama: "Moisturizer Hanasui 10× Brightening", harga: "38rb", ukuran: "30ml", cocok: ["kering", "skin barrier rusak", "barrier", "bekas jerawat", "kusam"], ingredients: "5× Ceramide, 5% Niacinamide, Tranexamic Acid", tekstur: "Gel", waktu: "Pagi dan Malam" },
+        { img: "moist3.jpeg", nama: "Emina Bright Glow Moisturizer", harga: "42rb", ukuran: "30ml", cocok: ["kombinasi", "kusam", "bekas jerawat"], ingredients: "Niacinamide, Vitamin C, Licorice Extract", tekstur: "Gel", waktu: "Pagi dan Malam" },
+        { img: "moist4.jpeg", nama: "Emina Barrier Water Moisturizer", harga: "42rb", ukuran: "30ml", cocok: ["kering", "skin barrier rusak", "barrier"], ingredients: "Ceramide, Niacinamide, Sodium Hyaluronate", tekstur: "Gel", waktu: "Pagi dan Malam" },
+        { img: "moist5.jpeg", nama: "Emina Water Calming Moisturizer", harga: "42rb", ukuran: "30ml", cocok: ["berminyak", "berjerawat", "beruntusan", "bekas jerawat", "sensitif"], ingredients: "2% Centella Asiatica, Niacinamide, Panthenol", tekstur: "Gel", waktu: "Pagi dan Malam" },
+        { img: "moist6.jpeg", nama: "The Originote Hyalucera Moisturizer", harga: "48rb", ukuran: "50ml", cocok: ["kering", "skin barrier rusak", "barrier"], ingredients: "Hyaluronic Acid, Ceramide", tekstur: "Gel", waktu: "Pagi dan Malam" },
+        { img: "moist7.jpeg", nama: "The Originote Brightening Moisturizer", harga: "49rb", ukuran: "50ml", cocok: ["kering", "kusam", "bekas jerawat", "skin barrier rusak", "barrier"], ingredients: "Niacinamide, Tranexamic Acid, Alpha Arbutin", tekstur: "Gel", waktu: "Pagi dan Malam" },
+        { img: "moist8.jpeg", nama: "Hanasui Acne Care Moisturizer", harga: "49rb", ukuran: "30ml", cocok: ["berminyak", "berjerawat", "bekas jerawat", "sensitif"], ingredients: "Centella Asiatica, Niacinamide, Panthenol", tekstur: "Gel", waktu: "Pagi dan Malam" },
+        { img: "moist9.jpeg", nama: "Facetology Triple Care Acne Calm Moisturizer", harga: "115rb", ukuran: "35ml", cocok: ["kering", "skin barrier rusak", "barrier", "sensitif"], ingredients: "8 Types Ceramide, Centella, Panthenol", tekstur: "Cream", waktu: "Pagi dan Malam" }
     ],
+
     "Sunscreen": [
-        { img: "sunscreen1.jpg", nama: "Sunscreen Hanasui SPF 30 PA+++", harga: "28rb", ukuran: "30ml", cocok: ["kombinasi", "kering"], ingredients: "Chemical UV Filters (Finish Glowing)", tekstur: "Gel", waktu: "Pagi" },
-        { img: "sunscreen2.jpg", nama: "Sunscreen Hanasui SPF 50 PA++++", harga: "38rb", ukuran: "30ml", cocok: ["kombinasi", "kering"], ingredients: "Chemical UV Filters (Finish Glowing)", tekstur: "Gel", waktu: "Pagi" },
-        { img: "sunscreen3.jpg", nama: "Sunscreen Glamazing SPF 50 PA+++", harga: "60rb", ukuran: "50ml", cocok: ["kering", "sangat kering"], ingredients: "Physical UV Filters (Finish Matte)", tekstur: "Cream", waktu: "Pagi" },
-        { img: "sunscreen4.jpg", nama: "Sunscreen Madam Gie SPF 35 PA+++", harga: "38rb", ukuran: "50ml", cocok: ["kombinasi"], ingredients: "Hybrid UV Filters (Finish Glowing)", tekstur: "Gel", waktu: "Pagi" },
-        { img: "sunscreen5.jpg", nama: "Sunscreen Acnaway SPF 35 PA+++", harga: "40rb", ukuran: "30ml", cocok: ["berminyak", "sangat berminyak", "berjerawat", "beruntusan"], ingredients: "Chemical UV Filters (Finish Matte)", tekstur: "Gel", waktu: "Pagi" },
-        { img: "sunscreen6.jpg", nama: "Sunscreen El formula SPF 50 PA+++", harga: "70rb", ukuran: "50ml", cocok: ["kombinasi", "berminyak"], ingredients: "Hybrid UV Filters (Finish Matte)", tekstur: "Watery", waktu: "Pagi" }
+        { img: "sunscreen1.jpg", nama: "Sunscreen Hanasui SPF 30 PA+++", harga: "28rb", ukuran: "30ml", cocok: ["kombinasi"], ingredients: "Chemical UV Filters", tipe: "Chemical", finish: "Glowing", tekstur: "Gel", waktu: "Pagi" },
+        { img: "sunscreen2.jpg", nama: "Sunscreen Hanasui SPF 50 PA++++", harga: "38rb", ukuran: "30ml", cocok: ["kombinasi"], ingredients: "Chemical UV Filters", tipe: "Chemical", finish: "Glowing", tekstur: "Gel", waktu: "Pagi" },
+        { img: "sunscreen3.jpg", nama: "Sunscreen Glamazing SPF 50 PA+++", harga: "60rb", ukuran: "50ml", cocok: ["kering"], ingredients: "Physical UV Filters", tipe: "Physical", finish: "Matte", tekstur: "Cream", waktu: "Pagi" },
+        { img: "sunscreen4.jpg", nama: "Sunscreen Madam Gie SPF 35 PA+++", harga: "38rb", ukuran: "50ml", cocok: ["kombinasi"], ingredients: "Hybrid UV Filters", tipe: "Hybrid", finish: "Glowing", tekstur: "Gel", waktu: "Pagi" },
+        { img: "sunscreen5.jpg", nama: "Sunscreen Acnaway SPF 35 PA+++", harga: "40rb", ukuran: "30ml", cocok: ["berminyak"], ingredients: "Chemical UV Filters", tipe: "Chemical", finish: "Matte", tekstur: "Gel", waktu: "Pagi" },
+        { img: "sunscreen6.jpg", nama: "Sunscreen El Formula SPF 50 PA+++", harga: "70rb", ukuran: "50ml", cocok: ["kombinasi"], ingredients: "Hybrid UV Filters", tipe: "Hybrid", finish: "Matte", tekstur: "Watery", waktu: "Pagi" },
+        { img: "sunscreen7.jpeg", nama: "Azarine Cicamide Barrier Sunscreen SPF 35 PA+++", harga: "39rb", ukuran: "40ml", cocok: ["kombinasi", "skin barrier rusak", "barrier"], ingredients: "Chemical UV Filters", tipe: "Chemical", finish: "Glowing", tekstur: "Gel", waktu: "Pagi" },
+        { img: "sunscreen8.jpeg", nama: "Azarine Calm My Acne Sunscreen SPF 35 PA+++", harga: "55rb", ukuran: "40ml", cocok: ["kombinasi", "berjerawat", "sensitif"], ingredients: "Chemical UV Filters", tipe: "Chemical", finish: "Glowing", tekstur: "Gel", waktu: "Pagi" },
+        { img: "sunscreen9.jpeg", nama: "Emina Water UV Gel SPF 50 PA++++", harga: "50rb", ukuran: "25ml", cocok: ["kering", "kusam", "bekas jerawat"], ingredients: "Hybrid UV Filters", tipe: "Hybrid", finish: "Glowing", tekstur: "Gel", waktu: "Pagi" },
+        { img: "sunscreen10.jpg", nama: "Emina Airy UV Gel SPF 50 PA++++", harga: "50rb", ukuran: "25ml", cocok: ["berminyak", "berjerawat", "beruntusan", "sensitif"], ingredients: "Chemical UV Filters", tipe: "Chemical", finish: "Glowing", tekstur: "Gel", waktu: "Pagi" },
+        { img: "sunscreen11.jpeg", nama: "Wardah Acne Calming Sunscreen SPF 35 PA+++", harga: "43rb", ukuran: "35ml", cocok: ["berminyak", "berjerawat", "beruntusan", "sensitif"], ingredients: "Chemical UV Filters", tipe: "Chemical", finish: "Glowing", tekstur: "Gel", waktu: "Pagi" },
+        { img: "sunscreen12.jpeg", nama: "Wardah Vitamin C Sunscreen Serum SPF 35 PA+++", harga: "42rb", ukuran: "40ml", cocok: ["kering", "kusam", "bekas jerawat"], ingredients: "Chemical UV Filters", tipe: "Chemical", finish: "Glowing", tekstur: "Gel", waktu: "Pagi" },
+        { img: "sunscreen13.jpeg", nama: "The Originote Ceramella Sunscreen SPF 50 PA+++", harga: "45rb", ukuran: "50ml", cocok: ["kombinasi", "kusam", "bekas jerawat", "barrier", "beruntusan", "sensitif"], ingredients: "Chemical UV Filters", tipe: "Chemical", finish: "Glowing", tekstur: "Gel", waktu: "Pagi" },
+        { img: "sunscreen14.jpeg", nama: "Facetology Pure Physical Sunscreen SPF 40 PA+++", harga: "75rb", ukuran: "30ml", cocok: ["kering"], ingredients: "Physical UV Filters", tipe: "Physical", finish: "Matte", tekstur: "Cream", waktu: "Pagi" }
     ]
 };
 
@@ -188,60 +146,90 @@ const kamusData = {
         { nama: "Salicylic Acid (BHA)", fungsi: "Membersihkan pori tersumbat, eksfoliasi minyak, meredakan radang.", takaran: "0.5% - 2%", cocokDi: "Serum / Exfoliating Toner / Facewash" },
         { nama: "Centella Asiatica", fungsi: "Menenangkan kemerahan, iritasi, dan mempercepat pemulihan jerawat.", takaran: "Pure Extract", cocokDi: "Serum / Moisturizer" },
         { nama: "Sulfur (Belerang)", fungsi: "Mengeringkan jerawat aktif dengan cepat dan menyerap kelebihan sebum.", takaran: "1% - 5%", cocokDi: "Spot Treatment" },
-        { nama: "Tea Tree Oil", fungsi: "Antimikroba alami untuk melawan bakteri penyebab jerawat.", takaran: "0.5% - 1%", cocokDi: "Spot Treatment" },
-        { nama: "Benzoyl Peroxide", fungsi: "Membunuh bakteri P. acnes langsung di sumber jerawat meradang.", takaran: "2.5% - 5%", cocokDi: "Spot Treatment" }
+        { nama: "Tea Tree Oil", fungsi: "Antimikroba alami untuk melawan bakteri penyebab jerawat.", takaran: "0.5% - 1%", cocokDi: "Spot Treatment" }
     ],
     "Kulit Berminyak & Pori": [
         { nama: "Salicylic Acid (BHA)", fungsi: "Membersihkan pori tersumbat, eksfoliasi minyak, meredakan radang.", takaran: "0.5% - 2%", cocokDi: "Serum / Toner / Facewash" },
         { nama: "Niacinamide", fungsi: "Mengatur produksi minyak dan menyamarkan tampilan pori besar.", takaran: "2% - 10%", cocokDi: "Serum" },
-        { nama: "Zinc PCA", fungsi: "Menyeimbangkan sebum dan mengurangi kilap berlebih di wajah.", takaran: "0.5% - 1%", cocokDi: "Serum / Toner" },
-        { nama: "Green Tea Extract", fungsi: "Antioksidan mengontrol kilap minyak dan menenangkan kulit.", takaran: "1% - 3%", cocokDi: "Toner" },
-        { nama: "Witch Hazel", fungsi: "Pengecil pori alami dan menyegarkan kulit berminyak.", takaran: "1% - 5%", cocokDi: "Toner" }
+        { nama: "Zinc PCA", fungsi: "Menyeimbangkan sebum dan mengurangi kilap berlebih di wajah.", takaran: "0.5% - 1%", cocokDi: "Serum / Toner" }
     ],
     "Kusam & Bekas Jerawat": [
         { nama: "Niacinamide", fungsi: "Mencerahkan kulit kusam, menyamarkan noda hitam, meratakan warna kulit.", takaran: "2% - 10%", cocokDi: "Serum" },
         { nama: "Alpha Arbutin", fungsi: "Menghambat enzim tyrosinase memudarkan bekas jerawat kehitaman.", takaran: "1% - 2%", cocokDi: "Serum" },
         { nama: "Vitamin C", fungsi: "Antioksidan tinggi mencerahkan dan memberi efek glowing seketika.", takaran: "5% - 15%", cocokDi: "Serum" },
-        { nama: "Tranexamic Acid", fungsi: "Menghambat pembentukan pigmen gelap akibat bekas jerawat membandel.", takaran: "2% - 5%", cocokDi: "Serum" },
-        { nama: "Kojic Acid", fungsi: "Mencerahkan warna kulit tidak merata.", takaran: "1% - 2%", cocokDi: "Serum" }
+        { nama: "Tranexamic Acid", fungsi: "Menghambat pembentukan pigmen gelap akibat bekas jerawat membandel.", takaran: "2% - 5%", cocokDi: "Serum" }
     ],
     "Skin Barrier & Sensitif": [
         { nama: "Ceramide", fungsi: "Memperbaiki dan memperkuat lapisan pelindung kulit (skin barrier).", takaran: "Kompleks 3x-5x", cocokDi: "Moisturizer / Facewash" },
         { nama: "Panthenol (Pro-Vitamin B5)", fungsi: "Menghidrasi mendalam dan menenangkan kulit reaktif/iritasi.", takaran: "1% - 5%", cocokDi: "Moisturizer / Toner" },
-        { nama: "Allantoin", fungsi: "Mendinginkan kulit meradang, kemerahan, atau kasar.", takaran: "0.1% - 0.5%", cocokDi: "Gel / Moisturizer" },
-        { nama: "Beta-Glucan", fungsi: "Menghidrasi dan menenangkan kulit sensitif lebih baik dari HA.", takaran: "0.1% - 1%", cocokDi: "Serum" },
-        { nama: "Colloidal Oatmeal", fungsi: "Meredakan gatal dan kemerahan pada kulit sangat sensitif.", takaran: "1% - 2%", cocokDi: "Cream" }
-    ],
-    "Kulit Sangat Kering": [
-        { nama: "Hyaluronic Acid", fungsi: "Menarik kelembapan dari udara ke dalam sel kulit.", takaran: "1% - 2%", cocokDi: "Toner / Serum" },
-        { nama: "Glycerin", fungsi: "Humektan klasik penjaga kelembutan kulit.", takaran: "2% - 5%", cocokDi: "Moisturizer" },
-        { nama: "Squalane", fungsi: "Mengunci hidrasi alami tanpa menyumbat pori.", takaran: "Pure / 5%", cocokDi: "Facial Oil" },
-        { nama: "Shea Butter", fungsi: "Menutrisi mendalam kulit kering pecah-pecah.", takaran: "2% - 10%", cocokDi: "Rich Cream" },
-        { nama: "Urea", fungsi: "Melembutkan sel kulit mati yang mengeras akibat kekeringan.", takaran: "5% - 10%", cocokDi: "Lotion" }
-    ],
-    "Anti-Aging & Tekstur": [
-        { nama: "Retinol", fungsi: "Merangsang regenerasi sel dan menyamarkan garis halus.", takaran: "0.1% - 1%", cocokDi: "Night Serum" },
-        { nama: "Bakuchiol", fungsi: "Alternatif retinol nabati yang aman untuk kulit sensitif/bumil.", takaran: "1% - 2%", cocokDi: "Serum" },
-        { nama: "Glycolic Acid (AHA)", fungsi: "Eksfoliasi permukaan kulit untuk menghaluskan tekstur kasar.", takaran: "5% - 10%", cocokDi: "Exfoliating Toner" },
-        { nama: "Peptides", fungsi: "Mendukung produksi kolagen agar kulit tetap kencang.", takaran: "1% - 5%", cocokDi: "Serum / Moisturizer" },
-        { nama: "Lactic Acid (AHA)", fungsi: "Eksfoliasi lembut sekaligus melembabkan kulit.", takaran: "5% - 10%", cocokDi: "Toner" }
+        { nama: "Allantoin", fungsi: "Mendinginkan kulit meradang, kemerahan, atau kasar.", takaran: "0.1% - 0.5%", cocokDi: "Gel / Moisturizer" }
     ]
 };
 
 // ==========================================
-// 3. NAVIGASI & POP-UP
+// 3. DATABASE TIPS & TRICK
+// ==========================================
+const tipsData = {
+    "Kulit Berminyak": [
+        { judul: "Skip Moisturizer Pagi Jika Terlalu Greasy", detail: "Jika kulitmu sangat berminyak di pagi hari, kamu boleh langsung menggunakan Sunscreen bertipe Gel/Water-based yang sudah mengandung pelembap agar wajah tidak semakin berkilap." },
+        { judul: "Gunakan Teknik Double Cleansing Malam Hari", detail: "Gunakan Micellar Water bebas minyak sebelum cuci muka di malam hari untuk mengangkat sisa minyak dan debu yang menempel seharian." },
+        { judul: "Pilih Sunscreen Bertipe Matte / Chemical", detail: "Hindari Physical Sunscreen yang thick. Gunakan Chemical/Hybrid Sunscreen dengan hasil akhir Matte atau Dry-Touch." },
+        { judul: "Jangan Scrub Wajah Terlalu Sering", detail: "Menggosok wajah berlebihan justru memicu kulit memproduksi minyak secara otomatis (rebound oil)." }
+    ],
+    "Kulit Kering": [
+        { judul: "Aplikasikan Skincare saat Kulit Masih Lembap", detail: "Gunakan Hydrating Toner atau Moisturizer saat kulit setengah basah setelah cuci muka agar kandungan penarik air bekerja lebih efektif." },
+        { judul: "Hindari Sabun Cuci Muka Berbusa Banyak", detail: "Pilih Gentle Cleanser bertekstur Gel/Cream tanpa kandungan SLS/SLES agar tidak mengikis kelembapan alami kulit." },
+        { judul: "Gunakan Moisturizer Bertekstur Rich/Cream", detail: "Pilih pelembap mengandung Ceramide atau Squalane untuk mengunci kadar air di dalam sel kulit sepanjang hari." }
+    ],
+    "Berjerawat": [
+        { judul: "Gunakan Acne Patch untuk Jerawat Bernanah", detail: "Jangan memencet jerawat dengan tangan. Tempelkan Acne Patch di malam hari agar nanah terserap higienis tanpa menimbulkan bekas luka." },
+        { judul: "Rutin Ganti Sarung Bantal 1 Minggu Sekali", detail: "Kain sarung bantal menyimpan banyak bakteri dan minyak yang sering menjadi pemicu timbulnya jerawat baru di pipi." },
+        { judul: "Gunakan Spot Treatment di Urutan Terakhir", detail: "Gunakan Spot Treatment (Salicylic Acid/Sulfur) hanya di titik jerawat aktif setelah pelembap meresap sempurna." }
+    ],
+    "Beruntusan": [
+        { judul: "Rutin Eksfoliasi BHA 1-2 Kali Seminggu", detail: "Beruntusan biasanya disebabkan oleh pori-pori tersumbat minyak dan sel kulit mati. Pakai serum Salicylic Acid secara berkala di malam hari." },
+        { judul: "Perhatikan Produk Perawatan Rambut", detail: "Sisa produk sampo atau minyak rambut yang menempel di dahi sering kali menjadi pemicu utama timbulnya beruntusan di jidat." }
+    ],
+    "Kulit Kusam": [
+        { judul: "Kombinasikan Vitamin C + Sunscreen di Pagi Hari", detail: "Memakai Serum Vitamin C sebelum Sunscreen akan melipatgandakan perlindungan antioksidan dari paparan sinar UV matahari." },
+        { judul: "Eksfoliasi Sel Kulit Mati Secara Teratur", detail: "Penumpukan sel kulit mati membuat wajah terlihat gelap dan kusam. Lakukan eksfoliasi lembut menggunakan AHA/Lactic Acid di malam hari." }
+    ],
+    "Kemerahan": [
+        { judul: "Kompres Wajah Menggunakan Hydrating Toner", detail: "Gunakan teknik Chizu Saeki Method (CSM) dengan membasahi kapas menggunakan toner Centella/Panthenol lalu tempelkan di area kulit kemerahan selama 5 menit." },
+        { judul: "Hindari Air Panas Saat Mencuci Muka", detail: "Air panas memicu pelebaran pembuluh darah di wajah yang membuat kulit tampak makin merah dan teriritasi." }
+    ],
+    "Skin Barrier Rusak": [
+        { judul: "Stop Semua Bahan Aktif Eksfoliasi & Retinol", detail: "Saat kulit perih atau rasa terbakar, hentikan pemakaian AHA, BHA, Vitamin C, dan Retinol sampai kondisi kulit pulih sepenuhnya." },
+        { judul: "Fokus Pada Basic Skincare (Cleanser + Moisturizer + Sunscreen)", detail: "Gunakan pelembap khusus mengandung Ceramide, Hyaluronic Acid, atau Centella Asiatica untuk menyusun kembali benteng perlindungan kulit." }
+    ],
+    "Pori-Pori Besar": [
+        { judul: "Gunakan Niacinamide 2-5% Secara Konsisten", detail: "Niacinamide terbukti membantu meregangkan elastisitas pori-pori dan menyeimbangkan produksi minyak sehingga pori-pori tampak lebih ringkas." },
+        { judul: "Jangan Biarkan Wajah Kotor Saat Tidur", detail: "Pori-pori terlihat besar akibat tersumbat oleh sisa kotoran yang memadat menjadi komedo. Selalu bersihkan wajah sebelum tidur." }
+    ]
+};
+
+let selectedName = '';
+let selectedSkinType = '';
+let selectedSkinProblems = [];
+
+// ==========================================
+// 4. NAVIGASI LAYAR
 // ==========================================
 function switchScreen(screenId) {
+    playSFX('click');
     stopBGM();
-    clearInterval(triviaState.timer); 
+    if (typeof triviaState !== 'undefined' && triviaState.timer) clearInterval(triviaState.timer);
+    
     document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
-    document.getElementById(screenId).classList.add('active');
+    
+    const target = document.getElementById(screenId);
+    if (target) target.classList.add('active');
     
     if (screenId === 'home-screen') renderHomeBadges();
     if (screenId === 'analisa-screen') initAnalisa();
     if (screenId === 'kamus-screen') initKamus();
+    if (screenId === 'tips-screen') initTips();
     if (screenId === 'trivia-screen') initTrivia();
-    if (screenId === 'leaderboard-screen') initLeaderboard();
 }
 
 function renderHomeBadges() {
@@ -249,14 +237,14 @@ function renderHomeBadges() {
     const badgeContainer = document.getElementById('home-badge-container');
     if (!badgeContainer) return;
 
-    let badgesHTML = '<h3 style="font-size: 14px; color: #D81B60; margin-bottom: 8px;">Koleksi Badge Kamu:</h3><div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">';
+    let badgesHTML = '<h3 style="font-size: 13px; color: #D81B60; margin-bottom: 8px;">Koleksi Badge Kamu:</h3><div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">';
     let hasBadge = false;
 
-    if (unlockedLevel >= 1) { badgesHTML += `<span style="background: #E0F7FA; color: #00796B; padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: bold;">Rookie</span>`; hasBadge = true; }
-    if (unlockedLevel >= 2) { badgesHTML += `<span style="background: #FFF9C4; color: #F57F17; padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: bold;">Middle</span>`; hasBadge = true; }
-    if (unlockedLevel >= 3) { badgesHTML += `<span style="background: linear-gradient(135deg, #FFD700, #FFA500); color: #fff; padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: bold;">Expert</span>`; hasBadge = true; }
+    if (unlockedLevel >= 1) { badgesHTML += `<span style="background: #E0F7FA; color: #00796B; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">Rookie</span>`; hasBadge = true; }
+    if (unlockedLevel >= 2) { badgesHTML += `<span style="background: #FFF9C4; color: #F57F17; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">Middle</span>`; hasBadge = true; }
+    if (unlockedLevel >= 3) { badgesHTML += `<span style="background: linear-gradient(135deg, #FFD700, #FFA500); color: #fff; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">Expert</span>`; hasBadge = true; }
 
-    if (!hasBadge) badgesHTML += `<span style="color: #888; font-size: 12px; font-style: italic;">Kamu belum mendapatkan Badge, selesaikan Trivia Skincare terlebih dahulu!</span>`;
+    if (!hasBadge) badgesHTML += `<span style="color: #888; font-size: 11px; font-style: italic;">Selesaikan Trivia Skincare untuk klaim Badge!</span>`;
     badgeContainer.innerHTML = badgesHTML + '</div>';
 }
 
@@ -268,13 +256,10 @@ function checkUpdatePopup() {
         <div style="background:white; padding:20px; border-radius:15px; width:85%; max-width:320px; text-align:center;">
             <h3 style="color:#D81B60; margin-bottom:10px;">Update Terbaru Web</h3>
             <p style="font-size:12px; color:#555; text-align:left; line-height:1.5; margin-bottom:15px;">
-                - Tampilan web baru yang lebih fresh.<br>
-                - Update baru trivia game dengan soal yang lebih menantang.<br>
-                - Fitur baru leaderboard online pemain.
+                - Tampilan web baru & interaktif.<br>
+                - Fitur baru: Tips & Trick Skincare lengkap!<br>
+                - Trivia game 3 level dengan audio & timer!
             </p>
-            <div style="background:#FFF0F3; padding:10px; border-radius:8px; font-size:11px; color:#D81B60; margin-bottom:15px;">
-                <strong>Open Donasi E-Wallet:</strong><br><strong style="font-size:14px;">085640743667</strong>
-            </div>
             <div style="display:flex; justify-content:center;">
                 <button class="menu-btn" style="padding: 10px 30px;" onclick="document.getElementById('update-modal').remove();">Lanjut</button>
             </div>
@@ -284,166 +269,185 @@ function checkUpdatePopup() {
 }
 
 // ==========================================
-// 4. ANALISA KULIT
+// 5. LOGIKA ANALISA KULIT
 // ==========================================
-let analisaData = { nama: '', skinType: '', problems: [], budget: '' };
+function initAnalisa() { resetAnalisa(); }
 
-function initAnalisa() { 
-    analisaData = { nama: '', skinType: '', problems: [], budget: '' };
-    renderAnalisaStep(1); 
-}
-
-function renderAnalisaStep(step) {
-    const container = document.getElementById('analisa-container');
-    if (step === 1) {
-        container.innerHTML = `
-            <p style="font-size:12px; color:#888; margin-bottom:15px;">Langkah 1: Data Diri</p>
-            <p style="text-align:left; font-size:13px;">Masukkan nama kamu sebelum memulai analisa:</p>
-            <input type="text" id="user-name" class="form-input" placeholder="Ketik nama kamu di sini...">
-            <div style="display:flex; justify-content:center;"><button class="menu-btn" onclick="saveName()">Lanjut</button></div>
-        `;
-    } else if (step === 2) {
-        container.innerHTML = `
-            <p style="font-size:12px; color:#888; margin-bottom:15px;">Langkah 2: Tipe Kulit</p>
-            <p style="text-align:left; font-size:13px;">Halo <strong>${analisaData.nama}</strong>, pilih tipe kulit kamu:</p>
-            <div class="menu-container">
-                <button class="menu-btn" onclick="saveSkinType('Kering')">Kering</button>
-                <button class="menu-btn" onclick="saveSkinType('Berminyak')">Berminyak</button>
-                <button class="menu-btn" onclick="saveSkinType('Kombinasi')">Kombinasi</button>
-            </div>
-        `;
-    } else if (step === 3) {
-        container.innerHTML = `
-            <p style="font-size:12px; color:#888; margin-bottom:15px;">Langkah 3: Permasalahan Kulit</p>
-            <div class="quiz-checkbox-grid" style="max-height: 200px; overflow-y: auto; text-align:left;">
-                <label style="padding:8px; background:#FFF0F3; border-radius:8px; display:block; margin-bottom:6px;"><input type="checkbox" value="Jerawat Aktif"> Jerawat Aktif</label>
-                <label style="padding:8px; background:#FFF0F3; border-radius:8px; display:block; margin-bottom:6px;"><input type="checkbox" value="Beruntusan"> Beruntusan</label>
-                <label style="padding:8px; background:#FFF0F3; border-radius:8px; display:block; margin-bottom:6px;"><input type="checkbox" value="Bekas Jerawat"> Bekas Jerawat</label>
-                <label style="padding:8px; background:#FFF0F3; border-radius:8px; display:block; margin-bottom:6px;"><input type="checkbox" value="Kulit Kusam"> Kulit Kusam</label>
-                <label style="padding:8px; background:#FFF0F3; border-radius:8px; display:block; margin-bottom:6px;"><input type="checkbox" value="Skin Barrier Rusak"> Skin Barrier Rusak</label>
-                <label style="padding:8px; background:#FFF0F3; border-radius:8px; display:block; margin-bottom:6px;"><input type="checkbox" value="Pori Pori"> Pori Pori</label>
-                <label style="padding:8px; background:#FFF0F3; border-radius:8px; display:block; margin-bottom:6px;"><input type="checkbox" value="Kemerahan"> Kemerahan / Sensitif</label>
-            </div>
-            <div style="display:flex; justify-content:center; margin-top:15px;"><button class="menu-btn" onclick="saveProblems()">Lanjut</button></div>
-        `;
-    } else if (step === 4) {
-        showAnalisaResult();
+function nextAnalisaStep(step) {
+    playSFX('click');
+    if (step === 2) {
+        const nameInput = document.getElementById('user-name');
+        if (!nameInput || !nameInput.value.trim()) { alert('Harap masukkan nama kamu terlebih dahulu!'); return; }
+        selectedName = nameInput.value.trim();
     }
+    document.querySelectorAll('.analisa-step').forEach(el => el.style.display = 'none');
+    const targetStep = document.getElementById(`analisa-step-${step}`);
+    if (targetStep) targetStep.style.display = 'block';
 }
 
-function saveName() { 
-    const val = document.getElementById('user-name').value;
-    if(val) { analisaData.nama = val; renderAnalisaStep(2); } 
-    else alert("Isi nama dulu dong!"); 
-}
-function saveSkinType(t) { analisaData.skinType = t; renderAnalisaStep(3); }
-function saveProblems() { 
-    analisaData.problems = Array.from(document.querySelectorAll('#analisa-container input:checked')).map(cb => cb.value);
-    renderAnalisaStep(4); 
+function toggleSingleSkinType(btn, type) {
+    playSFX('click');
+    document.querySelectorAll('#skin-type-options .option-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedSkinType = type;
+    document.getElementById('btn-next-step3').style.display = 'block';
 }
 
-function getBestProduct(category, userType, userProblems) {
+function toggleMultiProblem(btn, problem) {
+    playSFX('click');
+    if (btn.classList.contains('selected')) {
+        btn.classList.remove('selected');
+        selectedSkinProblems = selectedSkinProblems.filter(p => p !== problem);
+    } else {
+        btn.classList.add('selected');
+        selectedSkinProblems.push(problem);
+    }
+    document.getElementById('btn-show-result').style.display = selectedSkinProblems.length > 0 ? 'block' : 'none';
+}
+
+function getBestProductForProblems(category, skinType, problems) {
     const list = skincareDatabase[category];
-    let bestProduct = list[0];
+    if (!list || list.length === 0) return null;
+
+    let bestProd = list[0];
     let maxScore = -1;
 
     list.forEach(prod => {
         let score = 0;
-        const prodTags = prod.cocok.map(c => c.toLowerCase());
-        if (prodTags.includes(userType.toLowerCase())) score += 3;
-        userProblems.forEach(prob => {
-            let pLow = prob.toLowerCase();
-            if (pLow.includes("jerawat")) pLow = "berjerawat";
-            if (pLow.includes("kusam")) pLow = "kusam";
-            if (pLow.includes("sensitif") || pLow.includes("kemerahan")) pLow = "sensitif";
-            if (prodTags.some(t => t.includes(pLow) || pLow.includes(t))) score += 2;
+        const tags = prod.cocok.map(t => t.toLowerCase());
+
+        if (tags.includes(skinType.toLowerCase())) score += 3;
+        problems.forEach(prob => {
+            if (tags.includes(prob.toLowerCase())) score += 5;
+            if (prob === 'berjerawat' && (tags.includes('jerawat aktif') || tags.includes('beruntusan'))) score += 4;
+            if (prob === 'skin barrier rusak' && tags.includes('barrier')) score += 4;
         });
-        if (score > maxScore) { maxScore = score; bestProduct = prod; }
+
+        if (score > maxScore) {
+            maxScore = score;
+            bestProd = prod;
+        }
     });
-    return bestProduct;
+
+    return bestProd;
 }
 
-function showAnalisaResult() {
-    const container = document.getElementById('analisa-container');
-    const fw = getBestProduct("Facewash", analisaData.skinType, analisaData.problems);
-    const toner = getBestProduct("Toner", analisaData.skinType, analisaData.problems);
-    const serum = getBestProduct("Serum", analisaData.skinType, analisaData.problems);
-    const moist = getBestProduct("Moisturizer", analisaData.skinType, analisaData.problems);
-    const sunscreen = getBestProduct("Sunscreen", analisaData.skinType, analisaData.problems);
-    const paketItems = [fw, toner, serum, moist, sunscreen];
+function generateRecommendation() {
+    playSFX('correct');
 
-    fetch('https://web-skincare-production.up.railway.app/api/analisa', {
-    method: 'POST',
+    const problemLabels = selectedSkinProblems.map(p => {
+        if (p === 'berjerawat') return 'JERAWAT & BERUNTUSAN';
+        if (p === 'kusam') return 'KUSAM & BEKAS JERAWAT';
+        if (p === 'skin barrier rusak') return 'KEMERAHAN & SKIN BARRIER RUSAK';
+        if (p === 'pori pori') return 'PORI-PORI BESAR / MINYAK BERLEBIH';
+        return p.toUpperCase();
+    });
 
-    headers: {
-        'Content-Type': 'application/json'
-    },
-
-    body: JSON.stringify({
-        nama: analisaData.nama,
-        jenis_kulit: analisaData.skinType,
-        permasalahan_kulit: analisaData.problems.join(', '),
-
-        rekomendasi_produk: [
-            `Facewash: ${fw.nama}`,
-            `Toner: ${toner.nama}`,
-            `Serum: ${serum.nama}`,
-            `Moisturizer: ${moist.nama}`,
-            `Sunscreen: ${sunscreen.nama}`
-        ].join(' | ')
-    })
-})
-.then(response => response.json())
-.then(data => {
-    console.log('✅ Analisa tersimpan:', data);
-})
-.catch(error => {
-    console.error('❌ Gagal mengirim analisa:', error);
-});
-
-    let itemsHTML = paketItems.map(item => `
-        <div style="background: #FFF0F3; border: 1px solid #F8BBD0; border-radius: 12px; padding: 10px; display: flex; align-items: center; gap: 12px; margin-bottom: 10px; text-align: left;">
-            <img src="${item.img}" style="width: 55px; height: 75px; object-fit: cover; border-radius: 8px;" onerror="this.src='https://via.placeholder.com/55x75?text=No+Img'">
-            <div>
-                <h4 style="margin: 0; color: #D81B60; font-size: 13px;">${item.nama}</h4>
-                <p style="margin: 2px 0; font-size: 11px;"><strong>Harga:</strong> ${item.harga} (${item.ukuran}) | <strong>Tekstur:</strong> ${item.tekstur}</p>
-                <p style="margin: 2px 0; font-size: 11px; color:#D81B60;"><strong>Main Ingredients:</strong> ${item.ingredients}</p>
-                <p style="margin: 2px 0 0 0; font-size: 10px; color: #555;"><strong>Waktu Pakai:</strong> ${item.waktu}</p>
-            </div>
-        </div>
-    `).join('');
-
-    const problemsText = analisaData.problems.length > 0 ? analisaData.problems.join(', ') : 'Umum';
-
-    container.innerHTML = `
-        <p style="font-size:14px; font-weight:bold; color:#D81B60; margin-bottom:4px;">Hasil Analisa Kulit ${analisaData.nama}</p>
-        <p style="font-size:11px; color:#555; text-align:left; margin-bottom:10px;">Diracik khusus untuk tipe kulit <strong>${analisaData.skinType}</strong> dengan keluhan <strong>${problemsText}</strong>:</p>
-        <div style="max-height: 300px; overflow-y: auto; padding-right: 4px; margin-bottom: 12px;">${itemsHTML}</div>
-        <div style="display:flex; justify-content:center;"><button class="menu-btn" style="background:#78909C; padding:10px 20px;" onclick="switchScreen('home-screen')">Selesai & Kembali</button></div>
+    document.getElementById('result-name').innerText = `Hasil Analisa Kulit ${selectedName} 👋`;
+    document.getElementById('result-summary').innerHTML = `
+        <strong>Nama:</strong> ${selectedName}<br>
+        <strong>Tipe Kulit:</strong> ${selectedSkinType.toUpperCase()}<br>
+        <strong>Keluhan Utama:</strong> ${problemLabels.join(', ')}
     `;
+
+    const listContainer = document.getElementById('recommendation-list');
+    listContainer.innerHTML = '';
+
+    const categories = ["Facewash", "Toner", "Serum", "Moisturizer", "Sunscreen"];
+    let recommendations = [];
+
+    categories.forEach(cat => {
+        const best = getBestProductForProblems(cat, selectedSkinType, selectedSkinProblems);
+        if (best) recommendations.push({ category: cat, ...best });
+    });
+
+    // Render tampilan di layar HP pengguna
+    recommendations.forEach(prod => {
+        const item = document.createElement('div');
+        item.style.cssText = `background: #FFF0F3; border: 1px solid #F8BBD0; border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 12px; margin-bottom: 12px; text-align: left;`;
+
+        let extraInfo = '';
+        if (prod.tipe) extraInfo += ` | Tipe: ${prod.tipe}`;
+        if (prod.finish) extraInfo += ` | Finish: ${prod.finish}`;
+
+        item.innerHTML = `
+            <img src="${prod.img}" alt="${prod.nama}" style="width: 60px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #F8BBD0;" onerror="this.src='https://via.placeholder.com/60x80?text=No+Img'">
+            <div style="flex: 1;">
+                <span style="font-size: 10px; background: #D81B60; color: white; padding: 2px 6px; border-radius: 4px; font-weight: bold;">${prod.category}</span>
+                <h4 style="margin: 4px 0 2px 0; color: #D81B60; font-size: 13px;">${prod.nama}</h4>
+                <p style="margin: 0; font-size: 11px; color: #444;"><strong>Harga:</strong> ${prod.harga} (${prod.ukuran}) | <strong>Tekstur:</strong> ${prod.tekstur}${extraInfo}</p>
+                <p style="margin: 3px 0 0 0; font-size: 11px; color: #AD1457;"><strong>Ingredients Utama:</strong> ${prod.ingredients}</p>
+                <p style="margin: 2px 0 0 0; font-size: 10px; color: #666;"><strong>Waktu Pakai:</strong> ${prod.waktu || 'Pagi / Malam'}</p>
+            </div>
+        `;
+        listContainer.appendChild(item);
+    });
+
+    // Format rangkuman produk untuk dikirim ke email
+    const recsForEmail = recommendations.map(r => `- [${r.category}] ${r.nama} (${r.harga})`).join('\n');
+
+    // ==========================================
+    // PROSES PENGIRIMAN EMAIL OTOMATIS (EmailJS)
+    // ==========================================
+    const emailParams = {
+        user_name: selectedName,
+        skin_type: selectedSkinType.toUpperCase(),
+        skin_problems: problemLabels.join(', '),
+        recommendations: recsForEmail
+    };
+
+    // Ganti 'SERVICE_ID_KAMU' dan 'TEMPLATE_ID_KAMU' dengan milikmu dari EmailJS
+    emailjs.send('service_j1vbwgj', 'template_juo9jfn', emailParams)
+        .then(() => {
+            console.log('✅ Hasil analisa berhasil dikirim ke email!');
+        })
+        .catch((error) => {
+            console.error('❌ Gagal mengirim email:', error);
+        });
+
+    document.querySelectorAll('.analisa-step').forEach(el => el.style.display = 'none');
+    document.getElementById('analisa-step-result').style.display = 'block';
 }
 
+function resetAnalisa() {
+    selectedName = ''; selectedSkinType = ''; selectedSkinProblems = [];
+    const nameInput = document.getElementById('user-name');
+    if (nameInput) nameInput.value = '';
+    document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+    if (document.getElementById('btn-next-step3')) document.getElementById('btn-next-step3').style.display = 'none';
+    if (document.getElementById('btn-show-result')) document.getElementById('btn-show-result').style.display = 'none';
+    document.querySelectorAll('.analisa-step').forEach(el => el.style.display = 'none');
+    if (document.getElementById('analisa-step-1')) document.getElementById('analisa-step-1').style.display = 'block';
+}
+
+// ==========================================
+// 6. LOGIKA KAMUS INGREDIENTS
+// ==========================================
 function initKamus() {
     const btnBox = document.getElementById('kamus-problem-buttons');
     const list = document.getElementById('ingredients-list');
+    if (!btnBox || !list) return;
+
     btnBox.innerHTML = ''; 
-    list.innerHTML = '<p style="text-align:center; color:#888; font-style:italic; margin-top:20px;">Silahkan pilih salah satu kategori di atas untuk melihat daftar ingredients.</p>';
+    list.innerHTML = '<p style="text-align:center; color:#888; font-style:italic; margin-top:20px; font-size:12px;">Pilih salah satu permasalahan kulit di atas untuk melihat bahan aktifnya.</p>';
     
     Object.keys(kamusData).forEach(prob => {
         const btn = document.createElement('button');
-        btn.className = 'menu-btn'; 
-        btn.style.cssText = "padding: 10px; font-size: 13px; background: #FFD1DC; color: #D81B60; border: 1px solid #F8BBD0;";
+        btn.className = 'kamus-btn'; 
         btn.innerText = prob;
-        
         btn.onclick = () => {
-            document.querySelectorAll('#kamus-problem-buttons .menu-btn').forEach(b => { b.style.background = '#FFD1DC'; b.style.border = '1px solid #F8BBD0'; b.style.fontWeight = 'normal'; });
-            btn.style.background = '#F8BBD0'; btn.style.border = '2px solid #D81B60'; btn.style.fontWeight = 'bold';
+            playSFX('click');
+            document.querySelectorAll('#kamus-problem-buttons .kamus-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            
             list.innerHTML = '';
             kamusData[prob].forEach(i => {
                 const card = document.createElement('div');
                 card.className = 'ing-card';
-                card.style.cssText = "background: #FFF0F3; border: 1px solid #F8BBD0; border-radius: 10px; padding: 12px; margin-bottom: 8px; cursor: pointer;";
-                card.innerHTML = `<strong style="color:#D81B60; font-size:14px;">${i.nama}</strong><br><span style="font-size:11px; color:#555;">${i.fungsi}</span>`;
+                card.innerHTML = `
+                    <strong style="color:#D81B60; font-size:14px;">${i.nama}</strong><br>
+                    <span style="font-size:12px; color:#555; display:block; margin-top:4px;">${i.fungsi}</span>
+                `;
                 card.onclick = () => openIngModal(i);
                 list.appendChild(card);
             });
@@ -453,176 +457,193 @@ function initKamus() {
 }
 
 function openIngModal(item) {
+    playSFX('click');
     document.getElementById('modal-details').innerHTML = `
         <h3 style="color:#D81B60; margin-bottom:8px;">${item.nama}</h3>
         <p style="margin-bottom:6px;"><strong>Fungsi Utama:</strong> ${item.fungsi}</p>
-        <p style="margin-bottom:6px;"><strong>Spesifikasi / Persentase Aman:</strong> ${item.takaran}</p>
-        <p style="margin-bottom:0;"><strong>Format Produk Terbaik:</strong> ${item.cocokDi}</p>
+        <p style="margin-bottom:6px;"><strong>Takaran Aman:</strong> ${item.takaran}</p>
+        <p style="margin-bottom:0;"><strong>Format Produk:</strong> ${item.cocokDi}</p>
     `;
     document.getElementById('app-modal').style.display = 'flex';
 }
 
 // ==========================================
-// 5. TRIVIA GAME ENGINE
+// 7. LOGIKA TIPS & TRICK
 // ==========================================
+function initTips() {
+    const btnBox = document.getElementById('tips-category-buttons');
+    const list = document.getElementById('tips-content-list');
+    if (!btnBox || !list) return;
 
+    btnBox.innerHTML = '';
+    list.innerHTML = '<p style="text-align:center; color:#888; font-style:italic; margin-top:20px; font-size:12px;">Pilih salah satu kondisi kulit di atas untuk melihat panduan perawatannya.</p>';
+
+    Object.keys(tipsData).forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = 'tips-btn';
+        btn.innerText = cat;
+        btn.onclick = () => {
+            playSFX('click');
+            document.querySelectorAll('#tips-category-buttons .tips-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+
+            list.innerHTML = '';
+            tipsData[cat].forEach(t => {
+                const card = document.createElement('div');
+                card.className = 'tip-card';
+                card.innerHTML = `
+                    <strong style="color:#D81B60; font-size:13px;">💡 ${t.judul}</strong>
+                    <p style="font-size:12px; color:#444; margin-top:6px; margin-bottom:0; line-height:1.5;">${t.detail}</p>
+                `;
+                list.appendChild(card);
+            });
+        };
+        btnBox.appendChild(btn);
+    });
+}
+
+// ==========================================
+// 8. BANK SOAL ULTIMATE TRIVIA (80 SOAL)
+// ==========================================
 const bankSoalL1 = [
-    { q: "Apa fungsi utama dari Salicylic Acid?", opt: ["Mengeringkan jerawat", "Melemebabkan kulit", "Menaikkan skin tone", "Membuat kulit jadi glowing"], a: 0 },
-    { q: "Ingredients apa yang ampuh memudarkan bekas jerawat kehitaman?", opt: ["Petroleum Jelly", "Alpha Arbutin", "Sulfur murni", "Alkohol berat"], a: 1 },
-    { q: "Ingredients apa yang menjadi kunci utama memperbaiki skin barrier?", opt: ["Scrub kasar", "Alkohol", "Ceramide", "Parfum sintetis"], a: 2 },
-    { q: "Tekstur Moisturizer apa yang paling cocok dan lebih di rekomendasikan untuk kulit sangat kering?", opt: ["Bebas apa saja", "Watery", "Gel", "Cream"], a: 3 },
-    { q: "Ingredients alternatif Retinol yang aman untuk bumil adalah...", opt: ["Benzoyl Peroxide", "Bakuchiol", "Glycolic Acid", "Salicylic Acid murni"], a: 1 },
-    { q: "Morning Routin Skincare di pagi hari setelah cuci muka yang paling tepat adalah...", opt: ["Sunscreen -> Moisturizer -> Serum", "Toner -> Serum -> Moisturizer -> Sunscreen", "Moisturizer -> Toner -> Sunscreen", "Serum -> Sunscreen -> Toner"], a: 1 },
-    { q: "Berapa kali idealnya melakukan eksfoliasi dalam seminggu?", opt: ["Setiap hari pagi malam", "7 kali seminggu", "1-2 kali seminggu", "Sebulan sekali"], a: 2 },
-    { q: "Kapan waktu terbaik memakai Exfoliating Toner?", opt: ["Pagi hari sebelum berjemur", "Siang bolong", "Malam hari", "Setiap mau makan"], a: 2 },
-    { q: "Apa fungsi utama Ingredient Hyaluronic Acid?", opt: ["Menghidrasi kelembapan & menghidrasi kulit", "Mengangkat kulit mati", "Mengeringkan jerawat berlebih", "Membunuh bakteri jerawat"], a: 0 },
-    { q: "Zat apa yang berfungsi mengontrol minyak dan menyamarkan pori?", opt: ["Coconut Oil", "Niacinamide", "Vaseline", "Olive Oil"], a: 1 },
-    { q: "Berapa lama waktu ideal mendiamkan sheet mask di wajah?", opt: ["Semalaman sampai kering", "15-20 menit saja", "1 jam penuh", "5 detik saja"], a: 1 },
-    { q: "Apakah vitamin yang berfungsi sebagai antioksidan kuat pencerah kulit?", opt: ["Vitamin C", "Vitamin B12", "Vitamin K", "Vitamin D"], a: 0 },
-    { q: "Apa akibat jika kulit berminyak diskip penggunaan moisturizernya?", opt: ["Kulit jadi sangat sehat", "Produksi minyak makin menggila / rebound oil", "Pori-pori mengecil otomatis", "Bekas jerawat menghilang"], a: 1 },
-    { q: "Apa nama proses penyesuaian kulit saat awal memakai retinol/exfoliator di mana muncul jerawat kecil sementara?", opt: ["Skin peeling", "Breaking water", "Allergic break", "Purging"], a: 3 },
-    { q: "Manakah jenis sunscreen yang bekerja memantulkan sinar UV seperti cermin?", opt: ["Chemical sunscreen", "Physical / Mineral sunscreen", "Hybrid moisturizer", "Gel sunscreen"], a: 1 },
-    { q: "Bagaimana cara mencuci muka yang benar untuk kulit berjerawat?", opt: ["Digosok sekencang-kencangnya pakai handuk kasar", "Dipijat lembut dengan ujung jari menggunakan gentle cleanser", "Disiram air panas mendidih 40°", "Dibiarkan tanpa dibilas"], a: 1 },
-    { q: "Apakah fungsi Centella Asiatica dalam skincare?", opt: ["Menenangkan kemerahan dan iritasi", "Memutihkan kulit secara instan", "Menghilangkan sel kulit mati", "Memberi warna glowing permanen"], a: 0 },
-    { q: "Ingredients apa yang dikenal bagus untuk merawat kulit kusam dan meratakan warna kulit?", opt: ["Alkohol", "Sulfur", "Petrolatum", "Alpha Arbutin"], a: 3 },
-    { q: "Kapan waktu wajib re-apply sunscreen saat beraktivitas di luar ruangan?", opt: ["Setiap 2-3 jam sekali", "Sekali sehari saja", "Seminggu sekali", "Setiap 10 menit"], a: 0 },
-    { q: "Apa ciri utama jika skin barrier wajah kamu rusak?", opt: ["Kulit menjadi kusam walau sudah menggunakan tone up", "Kulit terasa perih, kemerahan, dan gampang jerawatan", "Pori-pori membesar dan sangat berminyak", "Kulit menjadi sangat kering dan tipis"], a: 1 },
-    { q: "Ingredients mana yang ampuh menyerap minyak berlebih & mengeringkan jerawat?", opt: ["Hyaluronic Acid", "Shea Butter", "Glycerin", "Sulfur"], a: 3 },
-    { q: "Jenis sunscreen yang tidak meninggalkan (whitecast) adalah...", opt: ["Chemical Sunscreen", "Physical Sunscreen", "Mineral Sunscreen", "Sunblock"], a: 0 },
-    { q: "Ingredients eksfoliasi lembut yang cocok untuk kulit kering adalah...", opt: ["Lactic Acid", "High Concentrate BHA", "Benzoyl Peroxide", "Retinol"], a: 0 },
-    { q: "Ingredients yang berfungsi mengunci kelembapan tanpa menyumbat pori adalah...", opt: ["Coconut Oil", "Squalane", "Mineral Oil", "Beeswax"], a: 1 },
-    { q: "Tranexamic Acid sangat efektif untuk mengatasi masalah...", opt: ["Kulit kering", "Hiperpigmentasi", "Kerutan", "Pori-pori besar"], a: 1 },
-    { q: "Ingredients yang memberikan cooling sensation adalah...", opt: ["Allantoin", "Retinol", "Salicylic Acid", "AHA"], a: 0 },
-    { q: "Tea Tree Oil dikenal memiliki sifat alami sebagai...", opt: ["Pelembap khusus kulit berjerawat", "Antimikroba pembasmi bakteri jerawat", "Pencerah kulit instan", "Pelindung sinar UV"], a: 1 },
-    { q: "Ingredients Moisturizer kelompok humektan klasik penjaga kelembapan kulit adalah...", opt: ["Dimethicone", "Paraffin Wax", "Olive Oil", "Glycerin"], a: 3 },
-    { q: "Derivatif vitamin C dikenal juga sebagai...", opt: ["Vitamin A paling powerful", "Vitamin C yang lebih stabil", "Vitamin C paling memerahkan", "Vitamin E antioksidan"], a: 1 },
-    { q: "Ingredients Brightening alami dari ekstrak tumbuhan yang aman untuk kulit sensitif adalah...", opt: ["Licorice Root Extract", "Bleaching Agent", "Hydroquinone", "Merkuri"], a: 0 },
-    { q: "Ingredients aktif yang tidak boleh dipakai bersamaan dengan Retinol dalam 1 jadwal?", opt: ["Hyaluronic Acid", "Ceramide", "Panthenol", "AHA"], a: 3 },
-    { q: "Bolehkah memakai Vitamin C dosis tinggi bersamaan dengan AHA?", opt: ["Boleh banget dicampur setiap hari", "Tidak boleh, berisiko iritasi parah", "Setiap pagi dicampur", "Boleh dicampur pada malam hari"], a: 1 },
-    { q: "Bahan calming apa yang sangat cocok dipadukan dengan Salicylic Acid?", opt: ["Lactic Acid", "Retinol High Dose", "Glycolic Acid", "Centella Asiatica"], a: 3 },
-    { q: "Urutan pemakaian produk skincare berdasarkan tekstur yang benar adalah...", opt: ["Dari paling kental ke paling encer", "Dari paling encer ke paling kental", "Acak saja bebas", "Dari yang paling mahal ke yang paling murah"], a: 1 },
-    { q: "Setelah memakai Retinol di malam hari, wajib hukumnya memakai apa di pagi harinya?", opt: ["Scrub kasar wajah", "Minyak zaitun", "Masker tanah liat", "Sunscreen"], a: 3 },
-    { q: "Ingredients apa yang paling aman dipakai dengan Niacinamide untuk melembapkan?", opt: ["Hydroquinone", "High Dose Exfoliator", "Benzoyl Peroxide", "Ceramide"], a: 3 },
-    { q: "Apa yang terjadi jika tidak re-apply sunscreen saat beraktivitas seharian di luar?", opt: ["Perlindungan UV menurun / tidak tahan lama", "Muka otomatis berjerawat parah", "Kulit makin glowing", "Tidak ada efek apa pun"], a: 0 },
-    { q: "Kapan waktu yang tepat mengaplikasikan Moisturizer?", opt: ["Saat kulit masih sedikit lembap", "Seminggu sekali saja", "Hanya saat kulit mengelupas", "Hanya setelah mencuci tangan"], a: 0 },
-    { q: "Jika menggunakan serum Vitamin C di pagi hari, produk apa yang wajib mendampinginya?", opt: ["Sunscreen", "Night Cream", "Sleeping Mask", "Exfoliating Toner"], a: 0 },
-    { q: "Teknik double cleansing paling penting dilakukan pada saat...", opt: ["Bangun tidur di pagi hari", "Malam hari setelah beraktivitas", "Sebelum makan siang", "Saat sedang makan"], a: 1 },
-    { q: "Pemakaian spot treatment jerawat dilakukan pada urutan...", opt: ["Paling akhir setelah moisturizer meresap", "Sebelum mencuci muka", "Sebelum memakai toner", "Dicampur dengan facial wash"], a: 0 },
-    { q: "Ciri utama produk berjenis \"Water-Based\" adalah...", opt: ["Terasa lengket dan berat di kulit", "Cepat menyerap dan berbahan dasar air", "Mengandung lapisan minyak tebal", "Susah dibilas dengan air"], a: 1 },
-    { q: "Apa fungsi utama dari \"Sleeping Mask\"?", opt: ["Untuk dipakai saat tidur siang 10 menit", "Mengunci seluruh skincare dan melembapkan sepanjang malam", "Sebagai tabir surya di malam hari", "Untuk mengeringkan jerawat saat tidur"], a: 1 },
-    { q: "Jerawat meradang (Cystic Acne) sebaiknya ditangani dengan cara...", opt: ["Dipencet keras agar pecah", "Diberikan Spot Treatment", "Digaruk sampai kering", "Dibiarkan menggunakan alkohol"], a: 1 },
-    { q: "Kulit beruntusan di dahi biasanya disebabkan oleh...", opt: ["Terlalu banyak minum air", "Pori-pori tersumbat", "Terlalu sering menggunakan moisturizer", "Kulit terlalu lembab"], a: 1 },
-    { q: "Apa perbedaan kulit dehidrasi dan kulit kering?", opt: ["Tidak ada bedanya sama sekali", "Kering adalah jenis kulit kurang minyak, dehidrasi adalah kondisi kulit kurang air", "Kering kurang air, dehidrasi kurang minyak", "Kering harus kusam, dehidrasi harus berwarna putih"], a: 1 },
-    { q: "AHA larut dalam...", opt: ["Minyak", "Asam sulfat", "Alkohol", "Air"], a: 3 },
-    { q: "BHA larut dalam...", opt: ["Air", "Minyak", "Keringat", "Udara"], a: 1 },
-    { q: "Produk tanpa sebuah produk skincare sudah kadaluarsa setelah dibuka dapat dilihat pada ikon...", opt: ["Gambar matahari", "Simbol jar/toples terbuka dengan angka seperti 12M", "Simbol bintang", "Simbol daun hijau"], a: 1 },
-    { q: "Mencuci muka menggunakan air yang terlalu panas dapat menyebabkan...", opt: ["Kulit menjadi putih bercahaya", "Minyak alami wajah terkikis habis dan kulit menjadi sangat kering", "Jerawat langsung hilang permanen", "Skin barrier menjadi lebih kuat kebal"], a: 1 }
+    { q: "Apa fungsi utama dari Salicylic Acid?", opt: ["A. Mengeringkan jerawat", "B. Melemebabkan kulit", "C. Menaikkan skin tone", "D. Membuat kulit jadi glowing"], a: 0 },
+    { q: "Ingredients apa yang ampuh memudarkan bekas jerawat kehitaman?", opt: ["A. Petroleum Jelly", "B. Alpha Arbutin", "C. Sulfur murni", "D. Alkohol berat"], a: 1 },
+    { q: "Ingredients apa yang menjadi kunci utama memperbaiki skin barrier?", opt: ["A. Scrub kasar", "B. Alkohol", "C. Ceramide", "D. Parfum sintetis"], a: 2 },
+    { q: "Tekstur Moisturizer apa yang paling cocok untuk kulit sangat kering?", opt: ["A. Bebas apa saja", "B. Watery", "C. Gel", "D. Cream"], a: 3 },
+    { q: "Ingredients alternatif Retinol yang aman untuk bumil adalah...", opt: ["A. Benzoyl Peroxide", "B. Bakuchiol", "C. Glycolic Acid", "D. Salicylic Acid murni"], a: 1 },
+    { q: "Morning Routine Skincare di pagi hari yang tepat adalah...", opt: ["A. Sunscreen -> Moisturizer", "B. Toner -> Serum -> Moisturizer -> Sunscreen", "C. Moisturizer -> Sunscreen", "D. Serum -> Sunscreen"], a: 1 },
+    { q: "Berapa kali idealnya melakukan eksfoliasi dalam seminggu?", opt: ["A. Setiap hari", "B. 7 kali seminggu", "C. 1–2 kali seminggu", "D. Sebulan sekali"], a: 2 },
+    { q: "Kapan waktu terbaik memakai Exfoliating Toner?", opt: ["A. Pagi hari", "B. Siang hari", "C. Malam hari", "D. Setiap mau makan"], a: 2 },
+    { q: "Apa fungsi utama Ingredient Hyaluronic Acid?", opt: ["A. Menghidrasi kelembapan kulit", "B. Mengangkat kulit mati", "C. Mengeringkan jerawat", "D. Membunuh bakteri"], a: 0 },
+    { q: "Zat apa yang berfungsi mengontrol minyak dan menyamarkan pori?", opt: ["A. Coconut Oil", "B. Niacinamide", "C. Vaseline", "D. Olive Oil"], a: 1 },
+    { q: "Berapa lama waktu ideal mendiamkan sheet mask di wajah?", opt: ["A. Semalaman", "B. 15–20 menit saja", "C. 1 jam penuh", "D. 5 detik saja"], a: 1 },
+    { q: "Apakah vitamin yang berfungsi sebagai antioksidan kuat pencerah kulit?", opt: ["A. Vitamin C", "B. Vitamin B12", "C. Vitamin K", "D. Vitamin D"], a: 0 },
+    { q: "Apa akibat jika kulit berminyak diskip penggunaan moisturizernya?", opt: ["A. Kulit sehat", "B. Produksi minyak makin menggila (rebound oil)", "C. Pori mengecil", "D. Jerawat hilang"], a: 1 },
+    { q: "Apa nama proses penyesuaian kulit saat awal memakai retinol?", opt: ["A. Skin peeling", "B. Breaking water", "C. Allergic break", "D. Purging"], a: 3 },
+    { q: "Manakah jenis sunscreen yang bekerja memantulkan sinar UV seperti cermin?", opt: ["A. Chemical sunscreen", "B. Physical / Mineral sunscreen", "C. Hybrid moisturizer", "D. Gel sunscreen"], a: 1 },
+    { q: "Bagaimana cara mencuci muka yang benar untuk kulit berjerawat?", opt: ["A. Digosok sekencang-kencangnya", "B. Dipijat lembut menggunakan gentle cleanser", "C. Disiram air panas 40°", "D. Dibiarkan tanpa dibilas"], a: 1 },
+    { q: "Apakah fungsi Centella Asiatica dalam skincare?", opt: ["A. Menenangkan kemerahan dan iritasi", "B. Memutihkan instan", "C. Mengangkat sel kulit mati", "D. Memberi warna glowing"], a: 0 },
+    { q: "Ingredients apa yang dikenal bagus untuk merawat kulit kusam?", opt: ["A. Alkohol", "B. Sulfur", "C. Petrolatum", "D. Alpha Arbutin"], a: 3 },
+    { q: "Kapan waktu wajib re-apply sunscreen saat di luar ruangan?", opt: ["A. Setiap 2–3 jam sekali", "B. Sekali sehari saja", "C. Seminggu sekali", "D. Setiap 10 menit"], a: 0 },
+    { q: "Apa ciri utama jika skin barrier wajah kamu rusak?", opt: ["A. Kulit kusam", "B. Kulit terasa perih, kemerahan, dan gampang jerawatan", "C. Pori membesar", "D. Kulit sangat tipis"], a: 1 }
 ];
 
 const bankSoalL2 = [
-    { q: "Manakah Ingredients berikut yang berfungsi sebagai skin barrier sekaligus soothing?", opt: ["Ceramide", "Parfum Sintetis", "Mineral Oil", "Panthenol"], correctIndices: [0, 3] },
-    { q: "Pilih Ingredients yang termasuk dalam kategori exfoliator!", opt: ["Glycolic Acid", "Salicylic Acid", "Ceramide", "Lactic Acid"], correctIndices: [0, 1, 3] },
-    { q: "Pilih Ingredients yang terbukti membantu memudarkan bekas jerawat!", opt: ["Alpha Arbutin", "Petroleum Jelly", "Niacinamide", "Tranexamic Acid"], correctIndices: [0, 2, 3] },
-    { q: "Ingredients manakah yang disarankan untuk memperbaiki skin barrier rusak?", opt: ["Alkohol 40%", "Ceramide", "Scrub Kasar", "Panthenol"], correctIndices: [1, 3] },
-    { q: "Produk apa saja yang wajib ada dalam basic skincare routine pagi hari?", opt: ["Moisturizer", "Sleeping Mask", "Sunscreen", "Face Wash"], correctIndices: [0, 2, 3] },
-    { q: "Pilih Ingredients dalam moisturizer yang termasuk kelompok humektan penarik air!", opt: ["Hyaluronic Acid", "Kaolin Clay", "Salicylic Acid", "Glycerin"], correctIndices: [0, 3] },
-    { q: "Ingredients apa saja yang tidak disarankan dipakai bersamaan dengan Retinol?", opt: ["AHA", "Ceramide", "BHA", "High Dose Vitamin C"], correctIndices: [0, 2, 3] },
-    { q: "Apa saja tanda-tanda jika kulit mengalami Over-Exfoliation?", opt: ["Kulit menjadi kebal", "Kulit terasa perih dan kemerahan", "Minyak hilang permanen", "Skin barrier terasa menipis"], correctIndices: [1, 3] },
-    { q: "Manakah Ingredients Brightening yang aman digunakan untuk mengatasi kulit kusam?", opt: ["Hydroquinone", "Tranexamic Acid", "Niacinamide", "Vitamin C"], correctIndices: [1, 2, 3] },
-    { q: "Pilih fungsi utama dari penggunaan Sunscreen di pagi hari!", opt: ["Mencegah penuaan dini", "Membuat wajah kebal jerawat", "Mencegah flek hitam", "Melindungi kulit dari radiasi UV"], correctIndices: [0, 2, 3] },
-    { q: "Kebiasaan buruk apa saja yang bisa memicu timbulnya jerawat di wajah?", opt: ["Jarang cuci muka setelah berkegiatan", "Banyak minum air putih", "Tidur 8 jam sehari", "Sering menyentuh wajah dengan tangan kotor"], correctIndices: [0, 3] },
-    { q: "Pilih Ingredients skincare yang bersifat soothing / mendinginkan kulit meradang!", opt: ["AHA 10%", "Allantoin", "Retinol 2%", "Panthenol"], correctIndices: [1, 3] },
-    { q: "Faktor apa saja yang memengaruhi cepat/lambatnya hasil skincare di wajah?", opt: ["Konsistensi pemakaian", "Harga produk skincare mahal", "Gaya hidup", "Kondisi awal skin barrier"], correctIndices: [0, 2, 3] },
-    { q: "Dari statement ini, manakah yang benar tentang toner?", opt: ["Toner wajib dibilas dengan sabun", "Ada toner hydrating dan exfoliating", "Toner dipakai sebelum cuci muka", "Tekstur Toner watery"], correctIndices: [1, 3] },
-    { q: "Pilih produk yang pas untuk merawat remaja pemula usia sekolah!", opt: ["Gentle cleanser pH seimbang", "Serum Retinol dosis tinggi", "Sunscreen ringan", "Moisturizer barrier"], correctIndices: [0, 2, 3] },
-    { q: "Apa saja kondisi yang mengharuskan kamu melakukan Double Cleansing?", opt: ["Setelah memakai makeup waterproof", "Saat tidak memakai skincare seharian", "Setelah bangun tidur pagi", "Setelah re-apply sunscreen seharian"], correctIndices: [0, 3] },
-    { q: "Cara untuk mengaplikasikan serum wajah yang benar adalah...", opt: ["Digosok kasar dengan handuk", "Diteteskan di tangan lalu ditepuk ke wajah", "Dicampur bersama sabun cuci muka", "Diteteskan langsung ke kulit tanpa tersentuh pipet"], correctIndices: [1, 3] },
-    { q: "Manakah dari produk berikut yang teksturnya thick saat diaplikasikan?", opt: ["Serum Hyaluronic Acid murni", "Toner AHA BHA", "Facial Wash Gel", "Moisturizer dengan Glycerin tinggi"], correctIndices: [0, 3] },
-    { q: "Apa fungsi dari ingredients antioksidan (Vitamin E/Green Tea) dalam skincare pagi?", opt: ["Mengeringkan jerawat dalam semalam", "Mencegah kerusakan sel radikal bebas", "Membantu meningkatkan kinerja sunscreen", "Menenangkan kulit dari polusi"], correctIndices: [1, 2, 3] },
-    { q: "Jika memiliki kulit berminyak, hal apa yang sebaiknya dihindari dalam produk?", opt: ["Niacinamide 2%", "Fragrance berlebihan", "Mineral Oil berat", "Alkohol tinggi"], correctIndices: [1, 2, 3] }
+    { q: "1. Manakah Ingredients berikut yang BUKAN berfungsi sebagai skin barrier sekaligus soothing?", opt: ["Salicylic Acid (BHA)", "Ceramide", "Zinc PCA", "Panthenol"], correctIndices: [0, 2] },
+    { q: "2. Pilih Ingredients yang termasuk dalam kategori exfoliator!", opt: ["Glycolic Acid", "Salicylic Acid", "Lactic Acid", "Centella Asiatica"], correctIndices: [0, 1, 2] },
+    { q: "3. Pilih Ingredients yang terbukti membantu bekas jerawat!", opt: ["Alpha Arbutin", "Niacinamide", "Tranexamic Acid", "Mineral Oil"], correctIndices: [0, 1, 2] },
+    { q: "4. Ingredients manakah yang disarankan untuk memperbaiki skin barrier rusak?", opt: ["Ceramide", "High Dose Alcohol", "Panthenol", "Parfum Sintetis"], correctIndices: [0, 2] },
+    { q: "5. Produk apa saja yang wajib ada dalam basic skincare routine pagi hari?", opt: ["Moisturizer", "Sunscreen", "Exfoliating Serum", "Face Wash"], correctIndices: [0, 1, 3] },
+    { q: "6. Pilih Ingredients dalam moisturizer yang termasuk kelompok humektan penarik air!", opt: ["Hyaluronic Acid", "Petrolatum", "Glycerin", "Beeswax"], correctIndices: [0, 2] },
+    { q: "7. Ingredients apa saja yang tidak disarankan dipakai bersamaan dengan Retinol?", opt: ["AHA", "BHA", "High Dose Vitamin C", "Hyaluronic Acid"], correctIndices: [0, 1, 2] },
+    { q: "8. Apa saja tanda-tanda jika kulit mengalami Over-Exfoliation?", opt: ["Kulit terasa perih dan kemerahan", "Skin barrier terasa menipis", "Kulit menjadi lebih tebal", "Pori-pori mengecil otomatis"], correctIndices: [0, 1] },
+    { q: "9. Manakah Ingredients Brightening yang aman digunakan untuk mengatasi kulit kusam?", opt: ["Vitamin C", "Tranexamic Acid", "Niacinamide", "Alpha Arbutin"], correctIndices: [0, 1, 2, 3] },
+    { q: "10. Pilih fungsi utama dari penggunaan Sunscreen di pagi hari!", opt: ["Mencegah penuaan dini", "Mencegah flek hitam", "Melindungi kulit dari radiasi UV", "Mencegah kanker kulit"], correctIndices: [0, 1, 2, 3] },
+    { q: "11. Kebiasaan buruk apa saja yang bisa memicu timbulnya jerawat di wajah remaja?", opt: ["Jarang cuci muka setelah berkegiatan", "Sering menyentuh wajah dengan tangan kotor", "Minum air putih cukup", "Rutin mengganti sarung bantal"], correctIndices: [0, 1] },
+    { q: "12. Pilih Ingredients skincare yang bersifat soothing / mendinginkan kulit meradang!", opt: ["Allantoin", "Panthenol", "High Concentrate AHA", "Menthol murni 10%"], correctIndices: [0, 1] },
+    { q: "13. Faktor apa saja yang memengaruhi cepat/lambatnya hasil skincare di wajah?", opt: ["Konsistensi pemakaian", "Kondisi awal skin barrier", "Genetika", "Gaya hidup"], correctIndices: [0, 1, 2, 3] },
+    { q: "14. Dari empat statement ini, manakah yang benar tentang toner?", opt: ["Ada toner hydrating dan exfoliating", "Tekstur Toner watery", "Toner harus diusap dengan scrub kasar", "Toner menggantikan fungsi sunscreen"], correctIndices: [0, 1] },
+    { q: "15. Pilih produk yang pas untuk merawat remaja pemula usia sekolah!", opt: ["Gentle cleanser pH seimbang", "Sunscreen ringan", "Moisturizer barrier", "Retinol 2% High Dose"], correctIndices: [0, 1, 2] },
+    { q: "16. Apa saja kondisi yang mengharuskan kamu melakukan Double Cleansing?", opt: ["Setelah memakai makeup waterproof", "Setelah re-apply sunscreen seharian", "Bangun tidur tanpa pakai produk malam", "Saat cuci muka di tengah mandi pagi"], correctIndices: [0, 1] },
+    { q: "17. Cara untuk mengaplikasikan serum wajah adalah...", opt: ["Diteteskan di telapak tangan lalu ditepuk perlahan ke wajah", "Diteteskan dengan pipet langsung ke area kulit", "Digosok kasar dengan kapas", "Dibiarkan mengering di pipet"], correctIndices: [0, 1] },
+    { q: "18. Manakah dari produk berikut yang teksturnya thick saat diaplikasikan?", opt: ["Serum Hyaluronic Acid murni", "Moisturizer dengan Glycerin tinggi", "Micellar Water", "Watery Toner"], correctIndices: [0, 1] },
+    { q: "19. Apa fungsi dari ingredients antioksidan seperti Vitamin E dan Green Tea dalam skincare pagi?", opt: ["Mencegah kerusakan sel akibat radikal bebas", "Membantu meningkatkan kinerja sunscreen", "Menenangkan kulit dari polusi", "Mengikis lapisan epidermis"], correctIndices: [0, 1, 2] },
+    { q: "20. Jika kamu memiliki kulit berminyak, hal apa yang sebaiknya dihindari dalam layer penggunaan produk?", opt: ["Fragrance berlebihan", "Mineral Oil berat", "Alkohol", "Centella Asiatica"], correctIndices: [0, 1, 2] }
 ];
 
 const bankSoalL3 = [
-    { q: "Sinta memiliki kulit yang sangat berjerawat dan sensitif. Ia membaca bahwa double cleansing penting, jadi sepulang sekolah ia membersihkan wajah dengan micellar water, lalu mencuci muka pakai facial wash. Malamnya, sebelum tidur, ia mengulangi hal yang sama. Karena ia merasa kulitnya masih kotor, ia melakukan deep cleansing lagi agar jerawatnya cepat hilang. Menurut Sinta, semakin sering membersihkan wajahnya menggunakan berbagai bahan bagus seperti itu akan semakin baik. Tindakan Sinta adalah..?", a: false },
-    { q: "Aiman yang berusia 15 tahun punya banyak jerawat mendem. Ia direkomendasikan temannya memakai Basic Skincare. Aiman akhirnya rutin menggunakan Gentle Cleanser, Moisturizer gel dengan Ingredients Centella Asiatica, dan Chemical Sunscreen setiap pagi. Pada malam harinya ia memutuskan untuk pakai spot treatment berbahan sulfur di area jerawat mendem, tindakan Aiman adalah..?", a: true },
-    { q: "Naisila merasa wajahnya sangat kering sehingga mengelupas akibat cuaca panas ekstrim. Sesampainya di rumah, ia menggunakan Hydrating Toner sebanyak 3 layer. Setelah toner agak meresap namun kulit masih sedikit lembap, Naisila langsung mengunci hidrasi tersebut menggunakan Moisturizer bertekstur Rich dengan Ingredients Hyaluronic Acid dan Ceramide. Tindakan Naisila secara keseluruhan adalah..?", a: true },
-    { q: "Alam ingin mencerahkan kulit kusamnya setelah liburan panjang. Karena sangat ambisius ingin hasilnya cepat, ia membeli serum 15% Vitamin C dan mencampurkannya dengan Vitamin C dari buah jeruk lalu mengoleskannya ke seluruh wajahnya. Setelah itu didiamkan 20 menit dan dibilas. Ia meyakini bahwa metode ini membuat kulitnya lebih cepat cerah karena kandungan Vitamin C yang tinggi. Tindakan Alam adalah..?", a: false },
-    { q: "Fida, seorang anak SMK baru saja mencoba exfoliasi untuk pertama kali menggunakan toner AHA. Setelah memakainya, wajahnya tidak terasa cekit-cekit sama sekali. Karena merasa produknya tidak bereaksi, ia lalu menambahkan langsung Exfoliating Toner tersebut berkali-kali ke kapas dan menggosokkannya kencang-kencang ke area hidung dan pipinya sehingga ia merasa baru produknya bekerja. Tindakan Fida adalah..?", a: false },
-    { q: "Gigih selalu rajin memakai sunscreen 2 jari setiap jam 6 pagi sebelum berangkat sekolah. Namun, karena ia aktif mengikuti ekstrakurikuler paduan suara hingga pulang sekolah jam 5 sore dan sering berkeringat, ia tidak pernah re-apply sunscreen dengan alasan sunscreen pagi sudah cukup karena terasa perlindungan pagi yang masih melekat. Tindakan Gigih adalah..?", a: false },
-    { q: "Danika baru saja membeli Moisturizer baru dengan ingredients Squalane dan Niacinamide. Sebelum mengoleskannya ke seluruh wajah, Danika melakukan patch test dengan mengoleskan sedikit produk tersebut di area belakang telinga atau rahang selama 24 jam untuk melihat apakah ada reaksi kemerahan atau gatal sebelum ia berani memasangnya rutin. Tindakan Danika adalah..?", a: true },
-    { q: "Aini merasa wajahnya sangat berminyak. Untuk mengatasinya, Aini sama sekali tidak pernah memakai Moisturizer karena ia merasa wajahnya sudah lembab karena minyak. Sebaliknya, ia rutin menyemprotkan face mist saja ke wajahnya pada siang dan malam hari sebagai pengganti Moisturizer. Tindakan Aini adalah..?", a: false },
-    { q: "Ayubi mengalami sebuah jerawat besar kemerahan di dahinya. Jerawat tersebut secara perlahan mengecil. Ia sangat penasaran sama isinya. Malam harinya, setelah mencuci muka dan mengaplikasikan basic skincare, ia menempelkan Acne Patch di atas jerawatnya dan membiarkannya semalaman untuk menyerap cairan nanah. Tindakan Ayubi adalah..?", a: true },
-    { q: "Bayangkan ibu kalian sedang dalam masa mengandung/menyusui. Suatu ketika kamu melihat ibumu menggunakan Serum Retinol dengan presentase 2%. Saat kalian tanya, alasan ibu kalian menggunakan Serum Retinol adalah karena kulitnya sudah mulai keriput. Dan saat itu juga kalian pun membiarkan nya karena alasan yang cukup masuk akal. Tindakan Kalian adalah..?", a: false }
+    { q: "1. Sinta memiliki kulit berjerawat dan sensitif. Sepulang sekolah ia membersihkan wajah dengan micellar water lalu facial wash. Malam sebelum tidur, ia mengulanginya lagi dan melakukan deep cleansing berulang kali karena menganggap semakin sering membersihkan wajah dengan produk bagus akan semakin cepat jerawatnya hilang. Tindakan Sinta adalah...?", a: false },
+    { q: "2. Aiman (15 tahun) punya banyak jerawat mendem. Ia rutin menggunakan Gentle Cleanser, Gel Moisturizer berbahan Centella Asiatica, dan Chemical Sunscreen di pagi hari. Malam harinya ia memakai spot treatment berbahan sulfur di area jerawat mendemnya. Tindakan Aiman adalah...?", a: true },
+    { q: "3. Naisila merasa kulitnya sangat kering dan mengelupas akibat cuaca panas. Di rumah, ia memakai Hydrating Toner 3 layer, lalu saat kulit masih agak lembap ia menguncinya dengan Rich Moisturizer mengandung Hyaluronic Acid & Ceramide. Tindakan Naisila secara keseluruhan adalah...?", a: true },
+    { q: "4. Alam ingin mencerahkan kulit kusamnya setelah liburan. Karena ingin cepat, ia mencampurkan Serum 15% Vitamin C dengan perasan buah jeruk lalu mengoleskannya ke seluruh wajah dan mendiamkannya 20 menit sebelum dibilas. Tindakan Alam adalah...?", a: false },
+    { q: "5. Fida baru mencoba eksfoliasi pertama kali dengan toner AHA. Karena tidak merasa cekit-cekit, ia menganggap produk tidak bekerja lalu menambahkan toner berkali-kali ke kapas dan menggosoknya kencang-kencang ke area hidung dan pipi. Tindakan Fida adalah...?", a: false },
+    { q: "6. Gigih selalu rajin memakai sunscreen 2 jari jam 6 pagi. Namun meski aktif ekstrakurikuler hingga jam 5 sore dan berkeringat, ia tidak pernah re-apply dengan alasan sunscreen pagi masih melekat dan terasa cukup. Tindakan Gigih adalah...?", a: false },
+    { q: "7. Danika baru membeli Moisturizer berbahan Squalane dan Niacinamide. Sebelum mengoleskannya ke seluruh wajah, ia melakukan patch test di area belakang telinga/rahang selama 24 jam untuk melihat apakah ada reaksi alergi. Tindakan Danika adalah...?", a: true },
+    { q: "8. Aini memiliki wajah sangat berminyak. Untuk mengatasinya, ia tidak pernah memakai Moisturizer karena menganggap kulitnya sudah lembap oleh minyak, dan hanya menyemprotkan face mist siang-malam sebagai pengganti Moisturizer. Tindakan Aini adalah...?", a: false },
+    { q: "9. Ayubi mengalami jerawat besar kemerahan di dahi. Malam harinya setelah mencuci muka dan mengaplikasikan basic skincare, ia menempelkan Acne Patch di atas jerawat tersebut dan membiarkannya semalaman untuk menyerap cairan. Tindakan Ayubi adalah...?", a: true },
+    { q: "10. Ibu kamu sedang hamil/menyusui dan menggunakan Serum Retinol 2% untuk mengatasi keriput. Saat mengetahuinya, kamu membiarkannya saja karena menganggap alasannya cukup masuk akal. Tindakan kamu membiarkannya adalah...?", a: false }
 ];
 
-let triviaState = { playerName: '', level: 1, lives: 0, currentIndex: 0, timer: null, timeLeft: 0, questions: [], multiAnswers: [] };
+// ==========================================
+// 9. TRIVIA GAME ENGINE
+// ==========================================
+let triviaState = { 
+    playerName: '', 
+    level: 1, 
+    lives: 5, 
+    currentIndex: 0, 
+    timer: null, 
+    timeLeft: 10, 
+    questions: [], 
+    multiAnswers: [] 
+};
 
 function initTrivia() {
     stopBGM();
-    clearInterval(triviaState.timer);
+    if (triviaState.timer) clearInterval(triviaState.timer);
     
-    // Cek jika user sudah Expert (Level 3 selesai)
-    let currentUnlocked = parseInt(localStorage.getItem('skincare_unlocked_level') || 0);
-    if (currentUnlocked >= 3) {
-        document.getElementById('trivia-container').innerHTML = `
-            <div class="trivia-box" style="padding: 30px 20px;">
-                <h3 style="color: #D81B60; font-size: 18px; margin-bottom: 20px; line-height: 1.5;">Anda sudah mendapat Badge Expert atau sudah menyelesaikan semua level pada Trivia Skincare.</h3>
-                <div style="display:flex; flex-direction:column; gap: 10px; align-items:center;">
-                    <button class="menu-btn" style="width:80%;" onclick="playSFX('click'); switchScreen('home-screen')">Kembali ke Beranda</button>
-                </div>
-            </div>
-        `;
-        return;
-    }
-
-    // Jika belum Expert, tampilkan screen biasa
     document.getElementById('trivia-container').innerHTML = `
-        <div class="trivia-box" style="padding: 25px 20px;">
-            <h3 style="color: #D81B60; font-size: 16px; margin-bottom: 8px;">Yakin udah jago di dunia skincare?</h3>
-            <h3 style="color: #D81B60; font-size: 18px; margin-bottom: 20px;">Coba tes yuk!</h3>
-            <p style="margin-bottom: 15px; font-weight: bold;">Masukkan nama kamu untuk memulai:</p>
-            <input type="text" id="trivia-name-input" class="form-input" placeholder="Ketik namamu di sini...">
-            <div style="display:flex; justify-content:center;"><button class="menu-btn" onclick="playSFX('click'); setTriviaName()">Lanjut</button></div>
+        <div class="trivia-box" style="padding: 20px; text-align:center;">
+            <h3 style="color: #D81B60; font-size: 16px; margin-bottom: 12px;">Selamat Datang di Trivia Skincare!</h3>
+            <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Silakan masukkan nama kamu sebelum memulai tantangan:</p>
+            <input type="text" id="trivia-name-input" class="form-input" placeholder="Masukkan nama kamu..." value="${localStorage.getItem('playerName') || ''}">
+            <button class="menu-btn" onclick="playSFX('click'); setTriviaName()">Lanjut ke Penjelasan &rarr;</button>
         </div>
     `;
 }
 
 function setTriviaName() {
-    const name = document.getElementById('trivia-name-input').value;
+    const input = document.getElementById('trivia-name-input');
+    const name = input ? input.value.trim() : '';
     if (name) { 
         triviaState.playerName = name; 
-
         localStorage.setItem('playerName', triviaState.playerName);
-
-        showLevelInfo(1); 
+        showLevelRules(1); 
     } else {
-        alert("Isi nama dulu dong!");
+        alert("Harap masukkan nama terlebih dahulu!");
     }
 }
 
-function showLevelInfo(lvl) {
-    let title = "", typeText = "", time = 0, lives = 0;
-    if (lvl === 1) { title = "Rookie"; typeText = "Pilihan Ganda"; time = 10; lives = 5; }
-    if (lvl === 2) { title = "Middle"; typeText = "Multi Choice"; time = 10; lives = 5; }
-    if (lvl === 3) { title = "Expert"; typeText = "Benar / Salah"; time = 15; lives = 3; }
+function showLevelRules(lvl) {
+    let title = "", typeText = "", time = 0, lives = 0, total = 0;
+    if (lvl === 1) { title = "Rookie"; typeText = "Pilihan Ganda (Single Choice)"; time = 10; lives = 5; total = 20; }
+    if (lvl === 2) { title = "Middle"; typeText = "Multi-Selection (Pilih > 1 Jawaban)"; time = 10; lives = 5; total = 10; }
+    if (lvl === 3) { title = "Expert"; typeText = "Analisa Kasus (Benar / Salah)"; time = 15; lives = 3; total = 10; }
 
     document.getElementById('trivia-container').innerHTML = `
-        <div class="trivia-box" style="padding: 25px 20px;">
-            <h3 style="color: #D81B60; font-size: 18px;">Halo ${triviaState.playerName}!</h3>
-            <p style="margin-top: 10px;">Sebelum masuk, perhatikan sistem permainannya:</p>
-            
-            <div style="background: #FFF; border: 2px solid #D81B60; border-radius: 10px; padding: 15px; margin: 15px 0;">
-                <h2 style="margin: 0; margin-bottom: 10px;">Level ${lvl} - ${title}</h2>
-                <ul style="text-align:left; font-size: 12px; color: #555; padding-left: 20px; line-height: 1.6;">
-                    <li><strong>Sistem:</strong> ${typeText}</li>
-                    <li><strong>Waktu:</strong> ${time} Detik / Soal</li>
-                    <li><strong>Total Nyawa:</strong> ${lives} Nyawa</li>
-                </ul>
+        <div class="trivia-box" style="padding: 20px; text-align:left;">
+            <h3 style="color: #D81B60; font-size: 18px; text-align:center;">Halo ${triviaState.playerName}! 👋</h3>
+            <div style="background: #FFF; border: 2px solid #F8BBD0; border-radius: 12px; padding: 15px; margin: 15px 0;">
+                <h4 style="color:#D81B60; margin-bottom: 8px; font-size:15px;">Sistem Level ${lvl}: ${title}</h4>
+                <p style="font-size: 12px; color:#444; margin-bottom: 4px;"><strong>• Tipe Soal:</strong> ${typeText}</p>
+                <p style="font-size: 12px; color:#444; margin-bottom: 4px;"><strong>• Jumlah Soal:</strong> ${total} Pertanyaan</p>
+                <p style="font-size: 12px; color:#444; margin-bottom: 4px;"><strong>• Waktu Jawab:</strong> ${time} Detik / Soal</p>
+                <p style="font-size: 12px; color:#444; margin-bottom: 0;"><strong>• Kesempatan Nyawa:</strong> ${lives} ❤️</p>
             </div>
-
-            <div style="display:flex; justify-content:center;"><button class="menu-btn" onclick="playSFX('click'); startTriviaLevel(${lvl})">Udah siap belum?</button></div>
+            <p style="font-size:11px; color:#888; font-style:italic; text-align:center;">Catatan: Jika Game Over di Level mana pun, kamu harus mengulang dari Level 1!</p>
+            <button class="menu-btn" style="margin-top:10px;" onclick="playSFX('click'); startCountdownSequence(${lvl})">Mulai Level ${lvl} ✨</button>
         </div>
     `;
+}
+
+function startCountdownSequence(lvl) {
+    let count = 3;
+    const container = document.getElementById('trivia-container');
+    
+    const countTimer = setInterval(() => {
+        playSFX('countdown');
+        container.innerHTML = `
+            <div class="trivia-box" style="padding: 40px; text-align:center;">
+                <h3 style="color:#D81B60; font-size:14px; margin-bottom:10px;">Bersiaplah...</h3>
+                <h1 style="font-size: 60px; color:#E91E63; margin:0;">${count}</h1>
+            </div>
+        `;
+        count--;
+        if (count < 0) {
+            clearInterval(countTimer);
+            startTriviaLevel(lvl);
+        }
+    }, 1000);
 }
 
 function startTriviaLevel(lvl) {
@@ -631,55 +652,74 @@ function startTriviaLevel(lvl) {
     
     if (lvl === 1) {
         triviaState.lives = 5;
-        triviaState.questions = shuffleArray(bankSoalL1).slice(0, 20);
+        triviaState.timeLeft = 10;
+        
+        let rawQuestions = shuffleArray(bankSoalL1).slice(0, 20);
+        triviaState.questions = rawQuestions.map((qObj, index) => {
+            let cleanQuestionText = qObj.q.replace(/^\d+\.\s*/, '');
+            return {
+                ...qObj,
+                q: `${index + 1}. ${cleanQuestionText}`
+            };
+        });
     } else if (lvl === 2) {
         triviaState.lives = 5;
+        triviaState.timeLeft = 10;
         triviaState.questions = shuffleArray(bankSoalL2).slice(0, 10);
     } else if (lvl === 3) {
         triviaState.lives = 3;
+        triviaState.timeLeft = 15;
         triviaState.questions = shuffleArray(bankSoalL3).slice(0, 10);
     }
     
     initAudio(); 
+    bgmAudio.currentTime = 0;
     bgmAudio.play().catch(()=>{});
-
-    showCountdownAndStart();
+    renderQuestionCard();
 }
 
-function showCountdownAndStart() {
-    let count = 3;
-    document.getElementById('trivia-container').innerHTML = `
-        <div class="trivia-box" style="padding: 40px 20px;">
-            <h3 style="color: #D81B60;">Bersiap!</h3>
-            <div id="countdown-num" style="font-size: 55px; font-weight: bold; color: #D81B60; margin: 20px 0;">3</div>
+function renderQuestionCard() {
+    if (triviaState.timer) clearInterval(triviaState.timer);
+    
+    const q = triviaState.questions[triviaState.currentIndex];
+    const container = document.getElementById('trivia-container');
+    triviaState.multiAnswers = [];
+    triviaState.timeLeft = (triviaState.level === 3) ? 15 : 10;
+
+    let inputHTML = '';
+    if (triviaState.level === 1) {
+        inputHTML = q.opt.map((o, idx) => `
+            <button class="option-btn" style="font-size:12px; margin-bottom:8px; text-align:left;" onclick="submitAnswer('abcd', ${idx})">${o}</button>
+        `).join('');
+    } else if (triviaState.level === 2) {
+        inputHTML = q.opt.map((o, idx) => `
+            <button class="option-btn" id="multi-opt-${idx}" style="font-size:12px; margin-bottom:8px; text-align:left;" onclick="toggleMultiTrivia(${idx})">${o}</button>
+        `).join('') + `<button class="menu-btn" style="margin-top:10px;" onclick="submitAnswer('multi', null)">Jawab Sekarang &rarr;</button>`;
+    } else if (triviaState.level === 3) {
+        inputHTML = `
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button class="option-btn" style="background:#E8F5E9; color:#2E7D32; border-color:#A5D6A7;" onclick="submitAnswer('tf', true)">BENAR</button>
+                <button class="option-btn" style="background:#FFEBEE; color:#C62828; border-color:#EF9A9A;" onclick="submitAnswer('tf', false)">SALAH</button>
+            </div>
+        `;
+    }
+
+    container.innerHTML = `
+        <div class="trivia-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-weight:bold; font-size:12px; color:#555;">
+                <span style="color:#D81B60;">Level ${triviaState.level} (${triviaState.currentIndex + 1}/${triviaState.questions.length})</span>
+                <span style="background:#FFF0F3; color:#D81B60; padding:2px 8px; border-radius:10px;">⏳ <strong id="timer-display">${triviaState.timeLeft}</strong>s</span>
+                <span>Nyawa: ${'❤️'.repeat(triviaState.lives)}</span>
+            </div>
+            <p style="margin:12px 0 15px 0; font-size:13px; font-weight:600; line-height:1.5; color:#333;">${q.q}</p>
+            ${inputHTML}
         </div>
     `;
-    playSFX('countdown');
-
-    const cdInterval = setInterval(() => {
-        count--;
-        const numElem = document.getElementById('countdown-num');
-        if (numElem) {
-            if (count > 0) { 
-                numElem.innerText = count; 
-                playSFX('countdown'); 
-            } else { 
-                clearInterval(cdInterval); 
-                renderQuestionCard(); 
-            }
-        } else { clearInterval(cdInterval); }
-    }, 1000);
-}
-
-function startTimer() {
-    clearInterval(triviaState.timer);
-    triviaState.timeLeft = triviaState.level === 3 ? 15 : 10;
-    document.getElementById('timer-display').innerText = `Waktu: ${triviaState.timeLeft} Detik`;
 
     triviaState.timer = setInterval(() => {
         triviaState.timeLeft--;
-        const timeDisplay = document.getElementById('timer-display');
-        if (timeDisplay) timeDisplay.innerText = `Waktu: ${triviaState.timeLeft} Detik`;
+        const timerEl = document.getElementById('timer-display');
+        if (timerEl) timerEl.innerText = triviaState.timeLeft;
 
         if (triviaState.timeLeft <= 0) {
             clearInterval(triviaState.timer);
@@ -688,65 +728,31 @@ function startTimer() {
     }, 1000);
 }
 
-function handleMultiCheck(idx) {
+function toggleMultiTrivia(idx) {
     playSFX('click');
-    const index = triviaState.multiAnswers.indexOf(idx);
-    if (index > -1) triviaState.multiAnswers.splice(index, 1);
-    else triviaState.multiAnswers.push(idx);
-}
+    const btn = document.getElementById(`multi-opt-${idx}`);
+    const pos = triviaState.multiAnswers.indexOf(idx);
 
-function renderQuestionCard() {
-    const q = triviaState.questions[triviaState.currentIndex];
-    const container = document.getElementById('trivia-container');
-    triviaState.multiAnswers = [];
-
-    let inputHTML = '';
-    if (triviaState.level === 1) {
-        inputHTML = q.opt.map((o, idx) => `<button class="menu-btn" style="width:100%; box-sizing:border-box; display:block; font-size:12px; margin-top:10px; text-align:left; background:#fff; color:#D81B60; border:1px solid #D81B60;" onclick="playSFX('click'); submitAnswer('abcd', ${idx})">${o}</button>`).join('');
-    } else if (triviaState.level === 2) {
-        inputHTML = q.opt.map((o, idx) => `
-            <label style="display:block; font-size:12px; text-align:left; background:#fff; padding:10px; margin-top:8px; border:1px solid #D81B60; border-radius:10px;">
-                <input type="checkbox" onchange="handleMultiCheck(${idx})"> ${o}
-            </label>
-        `).join('') + `<div style="display:flex; justify-content:center; margin-top:15px;"><button class="menu-btn" onclick="playSFX('click'); submitAnswer('multi', null)">Jawab Sekarang</button></div>`;
-    } else if (triviaState.level === 3) {
-        inputHTML = `<div class="trivia-btn-container" style="margin-top:20px; width:100%;">
-                        <button class="trivia-btn-true" style="flex:1;" onclick="playSFX('click'); submitAnswer('tf', true)">BENAR</button>
-                        <button class="trivia-btn-false" style="flex:1;" onclick="playSFX('click'); submitAnswer('tf', false)">SALAH</button>
-                     </div>`;
+    if (pos > -1) {
+        triviaState.multiAnswers.splice(pos, 1);
+        btn.classList.remove('selected');
+    } else {
+        triviaState.multiAnswers.push(idx);
+        btn.classList.add('selected');
     }
-
-    container.innerHTML = `
-        <div class="trivia-box">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-weight:bold; font-size:12px; color:#555;">
-                <span style="color:#D81B60;">Level ${triviaState.level}</span>
-                <span>Nyawa: ${triviaState.lives}</span>
-            </div>
-            
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; font-weight:bold; font-size:12px; background:#F8BBD0; padding:6px 10px; border-radius:8px;">
-                <span>Soal: ${triviaState.currentIndex + 1}/${triviaState.questions.length}</span>
-                <span id="timer-display" style="color:#C2185B;">Waktu: ${triviaState.level === 3 ? 15 : 10} Detik</span>
-            </div>
-
-            <p style="margin:15px 0; font-size:14px; font-weight:bold; line-height:1.5;">${q.q}</p>
-            ${inputHTML}
-        </div>
-    `;
-
-    startTimer();
 }
 
 function submitAnswer(type, val) {
-    clearInterval(triviaState.timer);
+    if (triviaState.timer) clearInterval(triviaState.timer);
+    
     const q = triviaState.questions[triviaState.currentIndex];
     let isCorrect = false;
 
-    if (type === 'abcd') isCorrect = (val === q.a);
-    if (type === 'tf') isCorrect = (val === q.a);
+    if (type === 'abcd' || type === 'tf') isCorrect = (val === q.a);
     if (type === 'multi') {
-        const selected = triviaState.multiAnswers.sort();
-        const correct = q.correctIndices.sort();
-        isCorrect = selected.length === correct.length && selected.every((v, i) => v === correct[i]);
+        const selected = triviaState.multiAnswers.sort().join(',');
+        const correct = q.correctIndices.sort().join(',');
+        isCorrect = (selected === correct);
     }
     if (type === 'timeout') isCorrect = false;
 
@@ -759,37 +765,20 @@ function submitAnswer(type, val) {
 
     if (triviaState.lives <= 0) {
         playSFX('gameOver');
+        stopBGM();
 
-
-        fetch('https://web-skincare-production.up.railway.appapi/trivia/gameover', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        nama: triviaState.playerName,
-        level: triviaState.level
-    })
-})
-.then(response => response.json())
-.then(data => {
-    console.log('💀 Game Over tersimpan:', data);
-})
-.catch(error => {
-    console.error('❌ Gagal menyimpan Game Over:', error);
-});
         document.getElementById('trivia-container').innerHTML = `
-            <div class="trivia-box" style="padding: 30px 20px;">
-                <h2 style="font-size:24px;">Game Over!</h2>
-                <p>Sayang sekali, nyawa kamu habis di Level ${triviaState.level}.</p>
-                <div style="display:flex; justify-content:center;"><button class="menu-btn" style="margin-top:15px;" onclick="playSFX('click'); showLevelInfo(1)">Mulai ulang</button></div>
+            <div class="trivia-box" style="padding: 25px 20px; text-align:center;">
+                <h2 style="color:#D81B60;">Game Over! 💔</h2>
+                <p style="font-size:13px; color:#555; margin: 10px 0;">Nyawa kamu habis di Level ${triviaState.level}. Sesuai sistem, kamu harus mengulang dari Level 1!</p>
+                <button class="menu-btn" onclick="playSFX('click'); showLevelRules(1)">Mulai Ulang dari Level 1</button>
             </div>
         `;
         return;
     }
 
     triviaState.currentIndex++;
-    if(triviaState.currentIndex >= triviaState.questions.length) {
+    if (triviaState.currentIndex >= triviaState.questions.length) {
         levelUpSequence();
     } else {
         renderQuestionCard();
@@ -804,341 +793,28 @@ function levelUpSequence() {
         localStorage.setItem('skincare_unlocked_level', triviaState.level);
     }
 
-    fetch('https://web-skincare-production.up.railway.app/api/leaderboard', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        nama: triviaState.playerName,
-        level: triviaState.level
-    })
-})
-.then(response => response.json())
-.then(data => {
-    console.log('✅ Data trivia tersimpan:', data);
-})
-.catch(error => {
-    console.error('❌ Gagal menyimpan data trivia:', error);
-});
-    
     const container = document.getElementById('trivia-container');
-    
     if (triviaState.level < 3) {
         container.innerHTML = `
-            <div class="trivia-box" style="padding: 30px 20px;">
-                <h2 style="font-size:24px;">Luar Biasa!</h2>
-                <p>Kamu berhasil menyelesaikan <strong>Level ${triviaState.level}</strong>.</p>
-                <div style="background: #FFF9C4; color: #F57F17; padding: 15px; border-radius: 15px; margin: 15px 0; font-weight: bold; border: 2px dashed #FBC02D;">
-                    BADGE BARU BERHASIL DIKLAIM
-                </div>
-                <div style="display:flex; justify-content:center;"><button class="menu-btn" onclick="playSFX('click'); showLevelInfo(${triviaState.level + 1})">Lanjut ke Level ${triviaState.level + 1}</button></div>
+            <div class="trivia-box" style="padding: 25px 20px; text-align:center;">
+                <h2 style="color:#D81B60;">Selamat! 🎉</h2>
+                <p style="font-size:13px; margin:10px 0;">Kamu berhasil menyelesaikan Level ${triviaState.level} dan membuka Badge baru!</p>
+                <button class="menu-btn" onclick="playSFX('click'); showLevelRules(${triviaState.level + 1})">Lanjut ke Level ${triviaState.level + 1} &rarr;</button>
             </div>
         `;
     } else {
+        stopBGM();
         container.innerHTML = `
-            <div class="trivia-box" style="padding: 30px 20px;">
-                <h2 style="font-size:24px;">SELAMAT TAMAT!</h2>
-                <p>Kamu sudah berhasil menyelesaikan seluruh tantangan <strong>Level Expert</strong>.</p>
-                <div style="background: linear-gradient(135deg, #FFD700, #FFA500); color: #fff; padding: 15px; border-radius: 15px; margin: 15px 0; font-weight: bold;">
-                    BADGE TERTINGGI TELAH DIKLAIM
-                </div>
-                <p style="font-size:11px; margin-bottom:20px;">Kamu resmi jadi master skincare dan berhasil melewati semua tantangan mematikan!</p>
-                <div style="display:flex; justify-content:center;"><button class="menu-btn" onclick="playSFX('click'); switchScreen('home-screen')">Selesai & Kembali ke Beranda</button></div>
+            <div class="trivia-box" style="padding: 25px 20px; text-align:center;">
+                <h2 style="color:#D81B60;">TAMAT! 🏆</h2>
+                <p style="font-size:13px; margin:10px 0;">Kamu resmi menyelesaikan seluruh level dan meraih Badge Expert Skincare!</p>
+                <button class="menu-btn" onclick="playSFX('click'); switchScreen('home-screen')">Kembali ke Beranda</button>
             </div>
         `;
     }
 }
-
-function initLeaderboard() {
-    const container = document.getElementById('leaderboard-list');
-
-    async function loadLeaderboard() {
-        try {
-            const response = await fetch('https://web-skincare-production.up.railway.app/api/leaderboard');
-
-            if (!response.ok) {
-                throw new Error('Gagal mengambil leaderboard');
-            }
-
-            const data = await response.json();
-
-            if (!data.success || !data.players || data.players.length === 0) {
-                container.innerHTML = `
-                    <div style="
-                        background:#FFF0F3;
-                        padding:15px;
-                        border-radius:10px;
-                        text-align:center;
-                        font-size:12px;
-                        color:#888;
-                    ">
-                        Belum ada pemain di leaderboard.
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = data.players.map((player, index) => {
-                let badge = 'Rookie';
-
-                if (player.level >= 3) {
-                    badge = 'Expert';
-                } else if (player.level >= 2) {
-                    badge = 'Middle';
-                }
-
-                const isOnline = player.online_status === 'Online';
-
-                return `
-                    <div style="
-                        display:flex;
-                        justify-content:space-between;
-                        align-items:center;
-                        background:#FFF7F9;
-                        padding:12px;
-                        margin-bottom:8px;
-                        border-radius:10px;
-                    ">
-
-                        <div>
-                            <div style="
-                                font-size:13px;
-                                font-weight:bold;
-                                color:#444;
-                            ">
-                                ${index + 1}. ${player.nama}
-                            </div>
-
-                            <div style="
-                                font-size:11px;
-                                color:#999;
-                                margin-top:3px;
-                            ">
-                                Level ${player.level}
-                            </div>
-                        </div>
-
-                        <div style="text-align:right;">
-                            <div style="
-                                color:#D81B60;
-                                font-size:12px;
-                                font-weight:bold;
-                                margin-bottom:3px;
-                            ">
-                                ${badge}
-                            </div>
-
-                            <div style="
-                                font-size:11px;
-                                color:${isOnline ? '#2E7D32' : '#888'};
-                            ">
-                                ${isOnline ? '🟢 Online' : '⚫ Offline'}
-                            </div>
-                        </div>
-
-                    </div>
-                `;
-            }).join('');
-
-        } catch (error) {
-            console.error('❌ Gagal memuat leaderboard:', error);
-
-            container.innerHTML = `
-                <div style="
-                    background:#FFEBEE;
-                    padding:15px;
-                    border-radius:10px;
-                    text-align:center;
-                    font-size:12px;
-                    color:#C62828;
-                ">
-                    Gagal memuat leaderboard
-                </div>
-            `;
-        }
-    }
-
-    // Langsung ambil data
-    loadLeaderboard();
-
-    // Update leaderboard setiap 2 detik
-    const leaderboardInterval = setInterval(() => {
-        // Hanya update kalau user masih berada di halaman leaderboard
-        const leaderboardScreen =
-            document.getElementById('leaderboard-screen');
-
-        if (
-            leaderboardScreen &&
-            leaderboardScreen.classList.contains('active')
-        ) {
-            loadLeaderboard();
-        } else {
-            // Sudah keluar leaderboard → hentikan interval
-            clearInterval(leaderboardInterval);
-        }
-    }, 2000);
-}
-
-    // Tampilan saat mengambil data
-    container.innerHTML = `
-        <div style="text-align:center; padding:20px; font-size:12px; color:#888;">
-            Memuat leaderboard...
-        </div>
-    `;
-
-    fetch('https://web-skincare-production.up.railway.app/api/leaderboard')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Gagal mengambil data leaderboard');
-            }
-
-            return response.json();
-        })
-
-        .then(data => {
-            if (!data.success || !data.players || data.players.length === 0) {
-                container.innerHTML = `
-                    <div style="
-                        background:#FFF0F3;
-                        padding:15px;
-                        border-radius:10px;
-                        text-align:center;
-                        font-size:12px;
-                        color:#888;
-                    ">
-                        Belum ada pemain di leaderboard.
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = data.players.map((player, index) => {
-
-                // Menentukan badge berdasarkan level
-                let badge = 'Rookie';
-
-                if (player.level >= 3) {
-                    badge = 'Expert';
-                } else if (player.level >= 2) {
-                    badge = 'Middle';
-                }
-
-                return `
-                    <div style="
-                        display:flex;
-                        justify-content:space-between;
-                        align-items:center;
-                        background:#FFF7F9;
-                        padding:12px;
-                        margin-bottom:8px;
-                        border-radius:10px;
-                    ">
-
-                        <div>
-                            <div style="
-                                font-size:13px;
-                                font-weight:bold;
-                                color:#444;
-                            ">
-                                ${index + 1}. ${player.nama}
-                            </div>
-
-                            <div style="
-                                font-size:11px;
-                                color:#999;
-                                margin-top:3px;
-                            ">
-                                Level ${player.level}
-                            </div>
-                        </div>
-
-                        <div style="
-                            text-align:right;
-                            font-size:12px;
-                        ">
-                            <div style="
-                                color:#D81B60;
-                                font-weight:bold;
-                                margin-bottom:3px;
-                            ">
-                                ${badge}
-                            </div>
-
-                            <div style="
-                                font-size:11px;
-                                color:${player.online_status === 'Online' ? '#2E7D32' : '#888'};
-                            ">
-                                ${player.online_status === 'Online'
-                                    ? '🟢 Online'
-                                    : '⚫ Offline'}
-                            </div>
-                        </div>
-
-                    </div>
-                `;
-            }).join('');
-        })
-
-        .catch(error => {
-            console.error('❌ Gagal memuat leaderboard:', error);
-
-            container.innerHTML = `
-                <div style="
-                    background:#FFEBEE;
-                    padding:15px;
-                    border-radius:10px;
-                    text-align:center;
-                    font-size:12px;
-                    color:#C62828;
-                ">
-                    Gagal memuat leaderboard
-                </div>
-            `;
-        });
-
 
 document.addEventListener('DOMContentLoaded', () => {
     renderHomeBadges();
     checkUpdatePopup();
 });
-
-// ===============================
-// HEARTBEAT ONLINE / OFFLINE
-// ===============================
-
-function sendHeartbeat() {
-    // Ambil nama pemain yang sedang tersimpan
-    const nama = localStorage.getItem('playerName');
-
-    if (!nama) return;
-
-    fetch('https://web-skincare-production.up.railway.app/api/heartbeat', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ nama: nama })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            console.log('🟢 Heartbeat terkirim:', nama);
-        }
-    })
-    .catch(error => {
-        console.error('❌ Heartbeat gagal:', error);
-    });
-}
-
-// Kirim langsung saat web dibuka
-sendHeartbeat();
-
-// Lalu kirim lagi setiap 10 detik
-// Mulai heartbeat 2 detik setelah web dibuka
-setTimeout(() => {
-    sendHeartbeat();
-
-    // Pertahankan status online setiap 2 detik
-    setInterval(sendHeartbeat, 2000);
-}, 2000);
