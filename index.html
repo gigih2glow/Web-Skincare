@@ -104,6 +104,7 @@
         .close-btn { position: absolute; right: 15px; top: 10px; color: #aaa; font-size: 24px; font-weight: bold; cursor: pointer; }
         .close-btn:hover { color: #D81B60; }
     </style>
+<link rel="stylesheet" href="modern.css">
 </head>
 <body>
 
@@ -113,21 +114,23 @@
         <h1>Skincare Assistant</h1>
         <p>Platform edukasi & analisa kebutuhan kulitmu</p>
         
-        <div id="home-badge-container"></div>
+        <div class="welcome-strip"><span class="status-dot"></span> YOUR PERSONAL SKINCARE SPACE <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 2 7 7 3-7 2-2 7-2-7-7-2 7-3 2-7Z"/></svg></div>
+<section class="hero-card"><div class="hero-copy"><span class="eyebrow">GLOW AT YOUR OWN PACE</span><h2>Kenali kulitmu,<br><em>rawat dengan cinta.</em></h2><p>Temukan rutinitas yang terasa lebih personal, sederhana, dan sesuai kebutuhan kulitmu.</p><button class="hero-cta" onclick="switchScreen('analisa-screen')">Mulai kenali kulit <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button></div><div class="hero-art" aria-hidden="true"><div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div><div class="art-sun"></div><div class="art-bottle bottle-back"><span>DAILY<br>GLOW</span></div><div class="art-bottle bottle-front"><span>skin<br>ritual</span><i></i></div><div class="art-leaf leaf-one"></div><div class="art-leaf leaf-two"></div><span class="art-star star-one">✦</span><span class="art-star star-two">✧</span><div class="art-caption"><span class="caption-icon"><svg viewBox="0 0 24 24"><path d="M12 21s-8-4.5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6.5-8 11-8 11Z"/></svg></span><span><b>Little steps,</b><small>healthier skin habits</small></span></div></div><div class="hero-bottom"><span><svg viewBox="0 0 24 24"><path d="m12 3 2.6 5.3L20 9l-4 4 .9 5.7-4.9-2.8-4.9 2.8L8 13 4 9l5.4-.7L12 3Z"/></svg> Simple skincare, smarter choices</span><span>Made for your skin journey</span></div></section>
+<div id="home-badge-container"></div><div class="section-heading"><span>YOUR SKINCARE MENU</span><h3>Mulai dari mana hari ini?</h3><p>Pilih fitur yang paling kamu butuhkan.</p></div>
 
         <div class="menu-container">
-            <button class="menu-btn" onclick="switchScreen('analisa-screen')">Analisa Kulit</button>
-            <button class="menu-btn" onclick="switchScreen('kamus-screen')">Kamus Ingredients</button>
-            <button class="menu-btn" onclick="switchScreen('tips-screen')">Tips & Trick Skincare</button>
-            <button class="menu-btn" onclick="switchScreen('trivia-screen')">Trivia Skincare</button>
+            <button class="menu-btn" onclick="switchScreen('analisa-screen')"><span class="menu-icon"><svg viewBox="0 0 24 24"><path d="M12 3a7 7 0 0 0-4 12.7V19h8v-3.3A7 7 0 0 0 12 3Z"/><path d="M9 22h6"/></svg></span><span class="menu-label"><b>Analisa Kulit</b><small>Kenali kebutuhan kulitmu</small></span><svg class="menu-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
+            <button class="menu-btn" onclick="switchScreen('kamus-screen')"><span class="menu-icon"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 1 4 17.5v-12Z"/><path d="M4 17.5A2.5 2.5 0 0 1 6.5 15H20M8 7h8M8 10h6"/></svg></span><span class="menu-label"><b>Kamus Ingredients</b><small>Pelajari bahan skincare</small></span><svg class="menu-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
+            <button class="menu-btn" onclick="switchScreen('tips-screen')"><span class="menu-icon"><svg viewBox="0 0 24 24"><path d="M12 3a7 7 0 0 0-4 12.7V19h8v-3.3A7 7 0 0 0 12 3Z"/><path d="m9 10 2 2 4-4M9 22h6"/></svg></span><span class="menu-label"><b>Tips & Trick Skincare</b><small>Kebiasaan kecil, dampak baik</small></span><svg class="menu-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
+            <button class="menu-btn" onclick="switchScreen('trivia-screen')"><span class="menu-icon"><svg viewBox="0 0 24 24"><path d="M12 3 14.5 8.5 20 11l-5.5 2.5L12 19l-2.5-5.5L4 11l5.5-2.5L12 3Z"/></svg></span><span class="menu-label"><b>Trivia Skincare</b><small>Uji pengetahuan sambil bermain</small></span><svg class="menu-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
         </div>
 
         <div class="footer-contact">
             <div class="contact-grid">
-                <a href="https://wa.me/6285640743667" target="_blank" class="contact-link">💬 WhatsApp</a>
-                <a href="https://instagram.com/gigih2glow" target="_blank" class="contact-link">📸 Instagram</a>
-                <a href="https://tiktok.com/@gigih2glow" target="_blank" class="contact-link">🎵 TikTok</a>
-                <a href="mailto:gigihjuang10@gmail.com" class="contact-link">📧 Email</a>
+                <a href="https://wa.me/6285640743667" target="_blank" class="contact-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4A8 8 0 1 1 20 11.5Z"/><path d="M9 8.5c.5 2 2 3.5 4 4l1-1 2 1c-.2 1.3-1.2 2-2.5 1.7-3-.7-5.5-3.2-6.2-6.2C7 6.7 7.7 5.7 9 5.5l1 2-1 1Z"/></svg> WhatsApp</a>
+                <a href="https://instagram.com/gigih2glow" target="_blank" class="contact-link"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" class="svg-fill"/></svg> Instagram</a>
+                <a href="https://tiktok.com/@gigih2glow" target="_blank" class="contact-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3v11.2a4.2 4.2 0 1 1-4-4.2"/><path d="M14 3c.7 3 2.7 4.7 6 5"/></svg> TikTok</a>
+                <a href="mailto:gigihjuang10@gmail.com" class="contact-link"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg> Email</a>
             </div>
         </div>
     </div>
