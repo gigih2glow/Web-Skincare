@@ -343,7 +343,7 @@ function generateRecommendation() {
         return p.toUpperCase();
     });
 
-    document.getElementById('result-name').innerText = `Hasil Analisa Kulit ${selectedName} 👋`;
+    document.getElementById('result-name').innerText = `Hasil Analisa Kulit · ${selectedName}`;
     document.getElementById('result-summary').innerHTML = `
         <strong>Nama:</strong> ${selectedName}<br>
         <strong>Tipe Kulit:</strong> ${selectedSkinType.toUpperCase()}<br>
@@ -399,10 +399,10 @@ function generateRecommendation() {
     // Ganti 'SERVICE_ID_KAMU' dan 'TEMPLATE_ID_KAMU' dengan milikmu dari EmailJS
     emailjs.send('service_j1vbwgj', 'template_juo9jfn', emailParams)
         .then(() => {
-            console.log('✅ Hasil analisa berhasil dikirim ke email!');
+            console.log('Hasil analisa berhasil dikirim ke email!');
         })
         .catch((error) => {
-            console.error('❌ Gagal mengirim email:', error);
+            console.error('Gagal mengirim email:', error);
         });
 
     document.querySelectorAll('.analisa-step').forEach(el => el.style.display = 'none');
@@ -492,7 +492,7 @@ function initTips() {
                 const card = document.createElement('div');
                 card.className = 'tip-card';
                 card.innerHTML = `
-                    <strong style="color:#D81B60; font-size:13px;">💡 ${t.judul}</strong>
+                    <strong style="color:#D81B60; font-size:13px;"><svg class="inline-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6m-5 3h4M8 14c-1.5-1.2-2-2.5-2-4a6 6 0 1 1 12 0c0 1.5-.5 2.8-2 4l-1 2h-6l-1-2Z"/></svg> ${t.judul}</strong>
                     <p style="font-size:12px; color:#444; margin-top:6px; margin-bottom:0; line-height:1.5;">${t.detail}</p>
                 `;
                 list.appendChild(card);
@@ -612,16 +612,16 @@ function showLevelRules(lvl) {
 
     document.getElementById('trivia-container').innerHTML = `
         <div class="trivia-box" style="padding: 20px; text-align:left;">
-            <h3 style="color: #D81B60; font-size: 18px; text-align:center;">Halo ${triviaState.playerName}! 👋</h3>
+            <h3 style="color: #D81B60; font-size: 18px; text-align:center;">Halo ${triviaState.playerName}!</h3>
             <div style="background: #FFF; border: 2px solid #F8BBD0; border-radius: 12px; padding: 15px; margin: 15px 0;">
                 <h4 style="color:#D81B60; margin-bottom: 8px; font-size:15px;">Sistem Level ${lvl}: ${title}</h4>
                 <p style="font-size: 12px; color:#444; margin-bottom: 4px;"><strong>• Tipe Soal:</strong> ${typeText}</p>
                 <p style="font-size: 12px; color:#444; margin-bottom: 4px;"><strong>• Jumlah Soal:</strong> ${total} Pertanyaan</p>
                 <p style="font-size: 12px; color:#444; margin-bottom: 4px;"><strong>• Waktu Jawab:</strong> ${time} Detik / Soal</p>
-                <p style="font-size: 12px; color:#444; margin-bottom: 0;"><strong>• Kesempatan Nyawa:</strong> ${lives} ❤️</p>
+                <p style="font-size: 12px; color:#444; margin-bottom: 0;"><strong>• Kesempatan Nyawa:</strong> ${lives} <svg class="inline-icon heart-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></p>
             </div>
             <p style="font-size:11px; color:#888; font-style:italic; text-align:center;">Catatan: Jika Game Over di Level mana pun, kamu harus mengulang dari Level 1!</p>
-            <button class="menu-btn" style="margin-top:10px;" onclick="playSFX('click'); startCountdownSequence(${lvl})">Mulai Level ${lvl} ✨</button>
+            <button class="menu-btn" style="margin-top:10px;" onclick="playSFX('click'); startCountdownSequence(${lvl})">Mulai Level ${lvl} <svg class="inline-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5L12 2Z"/></svg></button>
         </div>
     `;
 }
@@ -708,8 +708,8 @@ function renderQuestionCard() {
         <div class="trivia-box">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-weight:bold; font-size:12px; color:#555;">
                 <span style="color:#D81B60;">Level ${triviaState.level} (${triviaState.currentIndex + 1}/${triviaState.questions.length})</span>
-                <span style="background:#FFF0F3; color:#D81B60; padding:2px 8px; border-radius:10px;">⏳ <strong id="timer-display">${triviaState.timeLeft}</strong>s</span>
-                <span>Nyawa: ${'❤️'.repeat(triviaState.lives)}</span>
+                <span style="background:#FFF0F3; color:#D81B60; padding:2px 8px; border-radius:10px;"><svg class="inline-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6M12 2v3"/></svg> <strong id="timer-display">${triviaState.timeLeft}</strong>s</span>
+                <span>Nyawa: ${'<svg class="inline-icon heart-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg>'.repeat(triviaState.lives)}</span>
             </div>
             <p style="margin:12px 0 15px 0; font-size:13px; font-weight:600; line-height:1.5; color:#333;">${q.q}</p>
             ${inputHTML}
@@ -769,7 +769,7 @@ function submitAnswer(type, val) {
 
         document.getElementById('trivia-container').innerHTML = `
             <div class="trivia-box" style="padding: 25px 20px; text-align:center;">
-                <h2 style="color:#D81B60;">Game Over! 💔</h2>
+                <h2 style="color:#D81B60;">Game Over!</h2>
                 <p style="font-size:13px; color:#555; margin: 10px 0;">Nyawa kamu habis di Level ${triviaState.level}. Sesuai sistem, kamu harus mengulang dari Level 1!</p>
                 <button class="menu-btn" onclick="playSFX('click'); showLevelRules(1)">Mulai Ulang dari Level 1</button>
             </div>
@@ -797,7 +797,7 @@ function levelUpSequence() {
     if (triviaState.level < 3) {
         container.innerHTML = `
             <div class="trivia-box" style="padding: 25px 20px; text-align:center;">
-                <h2 style="color:#D81B60;">Selamat! 🎉</h2>
+                <h2 style="color:#D81B60;">Selamat!</h2>
                 <p style="font-size:13px; margin:10px 0;">Kamu berhasil menyelesaikan Level ${triviaState.level} dan membuka Badge baru!</p>
                 <button class="menu-btn" onclick="playSFX('click'); showLevelRules(${triviaState.level + 1})">Lanjut ke Level ${triviaState.level + 1} &rarr;</button>
             </div>
@@ -806,7 +806,7 @@ function levelUpSequence() {
         stopBGM();
         container.innerHTML = `
             <div class="trivia-box" style="padding: 25px 20px; text-align:center;">
-                <h2 style="color:#D81B60;">TAMAT! 🏆</h2>
+                <h2 style="color:#D81B60;">TAMAT!</h2>
                 <p style="font-size:13px; margin:10px 0;">Kamu resmi menyelesaikan seluruh level dan meraih Badge Expert Skincare!</p>
                 <button class="menu-btn" onclick="playSFX('click'); switchScreen('home-screen')">Kembali ke Beranda</button>
             </div>
