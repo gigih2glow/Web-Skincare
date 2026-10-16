@@ -1,0 +1,95 @@
+/* Materi edukasi tambahan untuk Kamus Ingredients dan Tips & Trick. */
+Object.assign(kamusData, {
+ "Hidrasi & Kulit Kering":[
+ {nama:"Hyaluronic Acid",fungsi:"Humektan yang membantu menarik air agar kulit terasa lebih lembap.",takaran:"Ikuti formula dan petunjuk produk.",cocokDi:"Serum, toner, moisturizer",caraPakai:"Gunakan sesuai label; lanjutkan moisturizer bila dibutuhkan.",catatan:"Tidak menggantikan moisturizer untuk kulit yang mudah kehilangan kelembapan."},
+ {nama:"Glycerin",fungsi:"Humektan yang membantu kulit mempertahankan air dan terasa lebih lentur.",takaran:"Ikuti formula produk.",cocokDi:"Cleanser, toner, serum, moisturizer",caraPakai:"Dapat digunakan pagi atau malam sesuai petunjuk.",catatan:"Kulit berminyak pun tetap membutuhkan hidrasi."},
+ {nama:"Squalane",fungsi:"Emolien yang membantu melembutkan kulit dan mengurangi rasa kering.",takaran:"Ikuti label produk.",cocokDi:"Moisturizer atau face oil",caraPakai:"Gunakan secukupnya sesuai kebutuhan.",catatan:"Amati reaksi kulit ketika mencoba produk baru."},
+ {nama:"Urea",fungsi:"Pada kadar kosmetik tertentu, membantu mengikat air dan melembutkan kulit kering.",takaran:"Pilih produk wajah yang sesuai dan ikuti label.",cocokDi:"Moisturizer",caraPakai:"Gunakan sesuai instruksi.",catatan:"Dapat menyengat pada kulit luka atau sedang iritasi."},
+ {nama:"Petrolatum",fungsi:"Bahan oklusif yang membantu mengurangi kehilangan air dari permukaan kulit.",takaran:"Gunakan secukupnya sesuai kebutuhan.",cocokDi:"Balm atau salep pelembap",caraPakai:"Oleskan tipis pada area sangat kering bila sesuai.",catatan:"Teksturnya bisa terasa berat bagi sebagian orang."}
+ ],
+ "Eksfoliasi & Tekstur":[
+ {nama:"Glycolic Acid (AHA)",fungsi:"Eksfolian yang membantu mengangkat sel kulit mati di permukaan dan memperhalus tekstur.",takaran:"Mulai dari produk berkadar rendah sesuai label.",cocokDi:"Toner atau serum eksfoliasi",caraPakai:"Gunakan malam hari dengan frekuensi rendah dan lanjutkan moisturizer.",catatan:"Dapat meningkatkan sensitivitas terhadap matahari; gunakan sunscreen."},
+ {nama:"Lactic Acid (AHA)",fungsi:"Membantu eksfoliasi permukaan kulit; formula tertentu juga mendukung hidrasi.",takaran:"Ikuti label produk.",cocokDi:"Serum atau toner eksfoliasi",caraPakai:"Mulai jarang dan amati toleransi kulit.",catatan:"Jangan menumpuk beberapa produk eksfoliasi sekaligus."},
+ {nama:"PHA (Gluconolactone)",fungsi:"Eksfolian yang sering digunakan dalam formula yang dirancang lebih lembut.",takaran:"Ikuti label produk.",cocokDi:"Toner atau serum",caraPakai:"Gunakan bertahap sesuai petunjuk.",catatan:"Tetap dapat mengiritasi; lembut bukan berarti bebas risiko."},
+ {nama:"Retinol",fungsi:"Turunan vitamin A yang digunakan untuk merawat tekstur dan beberapa masalah kulit.",takaran:"Pilih produk yang sesuai dan ikuti petunjuk label.",cocokDi:"Serum atau moisturizer malam",caraPakai:"Mulai perlahan, gunakan moisturizer, dan pakai sunscreen siang hari.",catatan:"Dapat mengiritasi. Retinoid sebaiknya dihindari saat hamil atau merencanakan kehamilan; konsultasikan tenaga kesehatan."}
+ ],
+ "Sunscreen & Antioksidan":[
+ {nama:"Zinc Oxide",fungsi:"Filter mineral yang membantu melindungi dari UVA dan UVB dalam sunscreen dengan formula tepat.",takaran:"Perhatikan SPF dan perlindungan UVA produk akhir.",cocokDi:"Sunscreen",caraPakai:"Gunakan jumlah memadai sesuai label dan aplikasikan ulang bila perlu.",catatan:"White cast dan kenyamanan berbeda antarformula."},
+ {nama:"Titanium Dioxide",fungsi:"Filter mineral yang membantu melindungi terutama dari UVB dan sebagian UVA, bergantung formulanya.",takaran:"Pilih produk dengan SPF dan perlindungan UVA yang jelas.",cocokDi:"Sunscreen",caraPakai:"Ikuti label; ulangi setelah berenang atau berkeringat.",catatan:"Hasil akhir produk bisa berbeda."},
+ {nama:"Vitamin E (Tocopherol)",fungsi:"Antioksidan yang digunakan untuk mendukung perawatan kulit dan stabilitas formula.",takaran:"Ikuti formula produk.",cocokDi:"Moisturizer atau sunscreen",caraPakai:"Gunakan sesuai label.",catatan:"Bukan pengganti sunscreen."},
+ {nama:"Green Tea Extract",fungsi:"Ekstrak teh hijau yang mengandung komponen antioksidan dan sering digunakan dalam produk soothing.",takaran:"Bergantung pada ekstrak dan formula.",cocokDi:"Serum, toner, moisturizer",caraPakai:"Gunakan sesuai petunjuk.",catatan:"Manfaat bergantung pada formulasi dan bukan solusi instan."}
+ ],
+ "Bahan untuk Menenangkan Kulit":[
+ {nama:"Colloidal Oatmeal",fungsi:"Bahan oat yang dapat membantu menenangkan kulit kering dan mendukung perlindungan kulit.",takaran:"Pilih produk yang diformulasikan untuk kulit.",cocokDi:"Cleanser atau moisturizer",caraPakai:"Gunakan sesuai petunjuk.",catatan:"Hindari jika memiliki alergi terhadap oat atau produk terkait."},
+ {nama:"Allantoin",fungsi:"Membantu melembutkan kulit dan mendukung rasa nyaman pada kulit kasar.",takaran:"Ikuti formula produk.",cocokDi:"Moisturizer atau cleanser",caraPakai:"Gunakan sesuai label.",catatan:"Hentikan bila muncul reaksi yang tidak biasa."},
+ {nama:"Azelaic Acid",fungsi:"Dapat membantu merawat jerawat tertentu serta tampilan kemerahan dan noda gelap.",takaran:"Ikuti konsentrasi dan instruksi produk.",cocokDi:"Gel atau krim perawatan",caraPakai:"Mulai bertahap dan gunakan moisturizer.",catatan:"Dapat menyengat; hentikan jika iritasi berat."}
+ ]
+});
+Object.assign(tipsData, {
+ "Rutinitas Dasar":[
+ {judul:"Mulai dari basic skincare",detail:"Rutinitas tidak harus panjang. Pembersih lembut, moisturizer, dan sunscreen di pagi hari merupakan dasar yang baik.",langkah:"Pagi: cleanser bila perlu → moisturizer → sunscreen. Malam: bersihkan wajah → moisturizer.",hindari:"Tidak harus membeli banyak serum atau toner agar rutinitas dianggap lengkap."},
+ {judul:"Perkenalkan produk baru satu per satu",detail:"Menambah banyak produk sekaligus membuat penyebab iritasi lebih sulit diketahui.",langkah:"Coba satu produk baru, amati reaksinya, lalu pertimbangkan produk berikutnya.",hindari:"Jangan mengganti seluruh rutinitas dalam satu malam."},
+ {judul:"Pahami urutan pemakaian",detail:"Secara umum, bersihkan wajah dahulu, lanjutkan produk perawatan, moisturizer, lalu sunscreen pada pagi hari.",langkah:"Ikuti petunjuk khusus pada label produk.",hindari:"Jangan menaruh sunscreen di bawah semua produk lain."},
+ {judul:"Konsistensi lebih penting daripada banyak langkah",detail:"Rutinitas sederhana yang nyaman lebih mudah dilakukan dan dievaluasi.",langkah:"Catat produk yang digunakan dan perubahan kulit dari waktu ke waktu.",hindari:"Jangan mengharapkan perubahan besar hanya dalam satu malam."}
+ ],
+ "Kulit Berminyak":[
+ {judul:"Kulit berminyak tetap butuh moisturizer",detail:"Minyak di permukaan kulit tidak selalu berarti kadar air kulit cukup. Pelembap ringan dapat mendukung kenyamanan skin barrier.",langkah:"Pilih gel atau lotion yang nyaman dan gunakan secukupnya.",hindari:"Jangan otomatis melewatkan pelembap hanya karena wajah mengilap."},
+ {judul:"Bersihkan wajah dengan lembut",detail:"Membersihkan terlalu sering atau terlalu keras dapat membuat kulit kering dan teriritasi.",langkah:"Gunakan gentle cleanser sesuai kebutuhan, terutama malam hari.",hindari:"Jangan mengejar sensasi kesat atau menggosok wajah berulang kali."},
+ {judul:"Gunakan blotting paper bila perlu",detail:"Kertas penyerap minyak dapat mengurangi kilap sementara tanpa perlu mencuci wajah lagi.",langkah:"Tekan perlahan pada area berminyak tanpa menggosok.",hindari:"Jangan menjadikannya pengganti rutinitas membersihkan wajah."},
+ {judul:"Pilih tekstur berdasarkan kenyamanan",detail:"Gel, lotion, dan cream memiliki formula berbeda; nama tekstur saja tidak menjamin cocok.",langkah:"Coba produk bertahap dan amati kenyamanan kulit.",hindari:"Jangan menganggap semua minyak pasti menyumbat pori."}
+ ],
+ "Kulit Kering":[
+ {judul:"Gunakan moisturizer setelah cuci muka",detail:"Pelembap membantu mengurangi kehilangan air dan rasa kulit tertarik.",langkah:"Setelah membersihkan wajah, aplikasikan moisturizer sesuai petunjuk.",hindari:"Jangan menunggu kulit sampai terasa sangat kering."},
+ {judul:"Hindari air terlalu panas",detail:"Air panas dan gesekan dapat memperburuk rasa kering.",langkah:"Gunakan air suam-suam kuku dan tepuk kulit dengan handuk lembut.",hindari:"Jangan menggosok wajah dengan handuk kasar."},
+ {judul:"Kenali bahan pelembap",detail:"Humektan seperti glycerin membantu menarik air; emolien dan oklusif membantu melembutkan serta mengurangi kehilangan air.",langkah:"Pilih moisturizer dengan formula yang nyaman.",hindari:"Jangan mengandalkan satu bahan untuk semua masalah kulit."}
+ ],
+ "Berjerawat":[
+ {judul:"Jangan memencet jerawat",detail:"Memencet atau mengorek jerawat dapat memperparah peradangan dan meningkatkan risiko bekas.",langkah:"Gunakan perawatan sesuai petunjuk; acne patch hidrokoid dapat melindungi jerawat yang memiliki titik terbuka.",hindari:"Jangan memakai kuku, jarum, atau alat yang tidak steril."},
+ {judul:"Mulai bahan aktif perlahan",detail:"Salicylic acid atau benzoyl peroxide dapat membantu sebagian jenis jerawat, tetapi bisa membuat kulit kering atau iritasi.",langkah:"Pilih satu bahan aktif dan ikuti petunjuk kemasan.",hindari:"Jangan menumpuk beberapa produk jerawat sekaligus."},
+ {judul:"Bersihkan benda yang menyentuh wajah",detail:"Residu dapat menempel pada sarung bantal, handuk, ponsel, atau perlengkapan olahraga.",langkah:"Bersihkan barang berkala dan ganti handuk atau sarung bantal secara rutin.",hindari:"Jangan menganggap satu kebiasaan sebagai penyebab pasti semua jerawat."},
+ {judul:"Ketahui kapan perlu konsultasi",detail:"Jerawat yang nyeri, dalam, meninggalkan bekas, atau tidak membaik layak dinilai tenaga kesehatan.",langkah:"Catat produk yang digunakan dan konsultasikan dengan dokter atau tenaga kesehatan.",hindari:"Jangan memakai obat resep milik orang lain."}
+ ],
+ "Beruntusan & Komedo":[
+ {judul:"Jangan langsung menambah banyak produk",detail:"Beruntusan dapat memiliki banyak penyebab dan tidak semuanya komedo atau purging.",langkah:"Pertahankan rutinitas dasar dan evaluasi produk tambahan satu per satu.",hindari:"Jangan langsung memakai beberapa eksfolian sekaligus."},
+ {judul:"Eksfoliasi secukupnya",detail:"Salicylic acid dapat membantu sebagian komedo, tetapi frekuensi yang cocok berbeda bagi tiap orang.",langkah:"Mulai sesuai label dengan frekuensi rendah dan amati reaksi kulit.",hindari:"Hentikan sementara bila kulit perih, mengelupas, atau kemerahan."},
+ {judul:"Perhatikan produk rambut",detail:"Produk rambut yang menempel di dahi atau pelipis mungkin berkontribusi pada sumbatan bagi sebagian orang.",langkah:"Bilas sampo sampai bersih dan hindari residu produk rambut di wajah.",hindari:"Jangan menyimpulkan penyebab dari satu kali muncul beruntusan."}
+ ],
+ "Kulit Kusam & Bekas Jerawat":[
+ {judul:"Jadikan sunscreen kebiasaan pagi",detail:"Paparan UV dapat membuat noda gelap lebih sulit memudar. Sunscreen membantu melindungi kulit dari UV.",langkah:"Pilih sunscreen broad-spectrum minimal SPF 30 dan ikuti petunjuk pemakaian ulang.",hindari:"Serum pencerah tidak menggantikan sunscreen."},
+ {judul:"Pilih satu bahan perawatan dulu",detail:"Niacinamide, vitamin C, azelaic acid, dan bahan lain dapat membantu masalah warna kulit tertentu dengan hasil yang bervariasi.",langkah:"Pilih satu produk sesuai kebutuhan lalu evaluasi bertahap.",hindari:"Jangan mengejar hasil instan dengan menumpuk bahan aktif."},
+ {judul:"Bedakan noda warna dan bekas luka",detail:"Noda gelap berbeda dari bekas jerawat yang cekung atau menonjol.",langkah:"Konsultasikan dengan dokter kulit bila bekas luka bertekstur menetap.",hindari:"Jangan melakukan peeling kuat sendiri di rumah."}
+ ],
+ "Kemerahan & Kulit Sensitif":[
+ {judul:"Sederhanakan rutinitas saat kulit rewel",detail:"Saat kulit perih atau kemerahan, kurangi produk yang tidak esensial sampai lebih nyaman.",langkah:"Gunakan cleanser lembut, moisturizer, dan sunscreen yang dapat ditoleransi.",hindari:"Jangan memaksa kulit memakai bahan aktif yang menyengat."},
+ {judul:"Lakukan patch test",detail:"Uji area kecil dapat membantu mengenali sebagian reaksi, tetapi tidak menjamin produk pasti aman untuk seluruh wajah.",langkah:"Ikuti petunjuk produk dan amati reaksi sebelum penggunaan lebih luas.",hindari:"Hentikan bila timbul ruam, gatal, atau bengkak."},
+ {judul:"Hindari gesekan berlebihan",detail:"Air terlalu panas, scrub, dan handuk kasar dapat menambah rasa tidak nyaman.",langkah:"Gunakan air suam-suam kuku dan tepuk kulit perlahan.",hindari:"Jangan menggosok sampai kulit terasa panas."}
+ ],
+ "Skin Barrier":[
+ {judul:"Kenali tanda kulit tidak nyaman",detail:"Rasa tertarik, kering, perih, atau mengelupas bisa menandakan rutinitas terlalu agresif, walau penyebabnya beragam.",langkah:"Kembali ke rutinitas dasar dan amati kondisi kulit.",hindari:"Jangan menambah eksfolian saat kulit iritasi."},
+ {judul:"Gunakan moisturizer konsisten",detail:"Ceramide, glycerin, petrolatum, dan bahan pelembap lain bekerja dengan cara berbeda untuk mendukung hidrasi.",langkah:"Pilih formula sederhana yang nyaman dan gunakan sesuai petunjuk.",hindari:"Tidak perlu membeli semua bahan sekaligus."},
+ {judul:"Rasa perih bukan tanda produk bekerja",detail:"Rasa terbakar atau perih menetap bukan bukti skincare sedang memperbaiki kulit.",langkah:"Hentikan produk yang menyebabkan reaksi kuat dan cari saran profesional bila diperlukan.",hindari:"Jangan memaksakan pemakaian demi mengejar hasil."}
+ ],
+ "Sunscreen":[
+ {judul:"Pilih SPF dan perlindungan UVA",detail:"Sunscreen broad-spectrum membantu melindungi dari UVA dan UVB. Untuk penggunaan sehari-hari, pilih minimal SPF 30.",langkah:"Gunakan jumlah memadai sesuai label pada area yang terpapar.",hindari:"Jangan hanya mengandalkan makeup ber-SPF jika jumlahnya tidak memadai."},
+ {judul:"Aplikasikan ulang saat perlu",detail:"Perlindungan berkurang karena waktu, keringat, air, dan gesekan.",langkah:"Ikuti label; umumnya ulangi sekitar setiap dua jam saat di luar dan setelah berenang atau berkeringat.",hindari:"Jangan menganggap sekali pakai pagi cukup untuk aktivitas luar seharian."},
+ {judul:"Tambahkan perlindungan fisik",detail:"Topi, pakaian pelindung, tempat teduh, dan membatasi paparan matahari melengkapi sunscreen.",langkah:"Gabungkan sunscreen dengan kebiasaan mencari teduh saat matahari terik.",hindari:"Jangan mengandalkan sunscreen sebagai satu-satunya perlindungan."}
+ ],
+ "Kebiasaan Sehari-hari":[
+ {judul:"Bersihkan wajah setelah berkeringat",detail:"Keringat dan gesekan bisa membuat kulit tidak nyaman bila residu menempel lama.",langkah:"Bersihkan wajah dengan lembut setelah aktivitas bila diperlukan.",hindari:"Jangan menggosok wajah dengan handuk secara kasar."},
+ {judul:"Jaga kebersihan benda yang menyentuh wajah",detail:"Ponsel, kuas makeup, handuk, dan sarung bantal dapat menyimpan residu.",langkah:"Bersihkan barang secara berkala sesuai petunjuknya.",hindari:"Jangan berbagi produk makeup yang bersentuhan langsung dengan kulit."},
+ {judul:"Beri waktu untuk mengevaluasi produk",detail:"Perubahan kulit tidak selalu terlihat dalam semalam dan dipengaruhi banyak faktor.",langkah:"Catat produk baru, frekuensi penggunaan, dan reaksi yang muncul.",hindari:"Jangan menyalahkan diri sendiri bila masalah kulit tetap muncul."}
+ ]
+});
+function initKamus(){
+ const btnBox=document.getElementById('kamus-problem-buttons'),list=document.getElementById('ingredients-list'); if(!btnBox||!list)return;
+ btnBox.innerHTML=''; list.innerHTML='<div class="reading-intro"><span class="reading-kicker">INGREDIENT LIBRARY</span><h3>Kenali bahan di balik skincare-mu</h3><p>Pilih topik, lalu buka kartu bahan untuk membaca fungsi, cara penggunaan, dan catatan pentingnya.</p></div><p class="reading-empty">Pilih salah satu topik di atas untuk mulai membaca.</p>';
+ Object.keys(kamusData).forEach(prob=>{const btn=document.createElement('button');btn.className='kamus-btn';btn.innerText=prob;btn.onclick=()=>{playSFX('click');document.querySelectorAll('#kamus-problem-buttons .kamus-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');list.innerHTML='<div class="reading-intro"><span class="reading-kicker">TOPIC GUIDE</span><h3>'+prob+'</h3><p>'+kamusData[prob].length+' bahan untuk kamu pelajari. Pilih kartu untuk membuka panduan lengkap.</p></div>';kamusData[prob].forEach(i=>{const card=document.createElement('button');card.type='button';card.className='ing-card reading-card';card.innerHTML='<span class="reading-card-top"><strong>'+i.nama+'</strong><span class="reading-arrow" aria-hidden="true">↗</span></span><span class="reading-summary">'+i.fungsi+'</span><span class="reading-more">Baca detail bahan <span aria-hidden="true">→</span></span>';card.onclick=()=>openIngModal(i);list.appendChild(card);});};btnBox.appendChild(btn);});
+}
+function openIngModal(item){
+ playSFX('click');document.getElementById('modal-details').innerHTML='<span class="reading-kicker">INGREDIENT GUIDE</span><h3 class="reading-modal-title">'+item.nama+'</h3><p><strong>Fungsi utama</strong><br>'+item.fungsi+'</p><p><strong>Umumnya ditemukan pada</strong><br>'+item.cocokDi+'</p><p><strong>Takaran / konsentrasi</strong><br>'+item.takaran+'</p><p><strong>Cara menggunakan</strong><br>'+(item.caraPakai||'Ikuti petunjuk pada kemasan dan perkenalkan produk secara bertahap.')+'</p><div class="reading-note"><strong>Catatan penting</strong><p>'+(item.catatan||'Perhatikan reaksi kulit dan hentikan pemakaian bila terjadi iritasi.')+'</p></div>';document.getElementById('app-modal').style.display='flex';
+}
+function initTips(){
+ const btnBox=document.getElementById('tips-category-buttons'),list=document.getElementById('tips-content-list');if(!btnBox||!list)return;
+ btnBox.innerHTML='';list.innerHTML='<div class="reading-intro"><span class="reading-kicker">SKINCARE JOURNAL</span><h3>Tips yang realistis untuk rutinitasmu</h3><p>Pilih topik untuk membaca langkah sederhana, alasan di baliknya, dan hal yang sebaiknya dihindari.</p></div><p class="reading-empty">Pilih topik di atas untuk mulai membaca.</p>';
+ Object.keys(tipsData).forEach(cat=>{const btn=document.createElement('button');btn.className='tips-btn';btn.innerText=cat;btn.onclick=()=>{playSFX('click');document.querySelectorAll('#tips-category-buttons .tips-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');list.innerHTML='<div class="reading-intro"><span class="reading-kicker">PRACTICAL GUIDE</span><h3>'+cat+'</h3><p>'+tipsData[cat].length+' panduan singkat yang bisa kamu terapkan bertahap.</p></div>';tipsData[cat].forEach((t,index)=>{const card=document.createElement('article');card.className='tip-card reading-tip';card.innerHTML='<span class="tip-number">TIP '+String(index+1).padStart(2,'0')+'</span><div class="reading-card-top"><strong>'+t.judul+'</strong></div><p class="reading-summary">'+t.detail+'</p>'+(t.langkah?'<div class="tip-detail"><strong>Yang bisa dilakukan</strong><p>'+t.langkah+'</p></div>':'')+(t.hindari?'<div class="tip-caution"><strong>Perlu diingat</strong><p>'+t.hindari+'</p></div>':'');list.appendChild(card);});};btnBox.appendChild(btn);});
+}
