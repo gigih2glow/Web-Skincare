@@ -20,3 +20,35 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #e9a5
 @media(max-width:650px){body{padding:0!important}.app-container{width:100%!important;min-height:100vh!important;border-radius:0!important;padding:25px 18px 28px!important}.hero-card{grid-template-columns:1fr;min-height:0}.hero-copy{padding:27px 23px 18px}.hero-copy h2{font-size:32px!important}.hero-art{min-height:225px}.art-sun{right:calc(50% - 90px);top:10px;width:165px;height:165px}.bottle-back{right:calc(50% - 105px);bottom:37px}.bottle-front{right:calc(50% - 30px);bottom:28px}.art-caption{right:12px;bottom:10px}.star-one{right:calc(50% - 120px);top:10px}.hero-bottom{padding:12px 17px;font-size:9px}.menu-container{grid-template-columns:1fr!important;gap:10px!important}.menu-btn{min-height:80px!important}.contact-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.section-heading h3{font-size:23px!important}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
 .inline-icon{display:inline-block;width:16px;height:16px;vertical-align:-3px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.heart-icon{color:#d94e83;fill:#f3a0bf;stroke:#d94e83}
+
+
+/* Long-form learning cards: Kamus Ingredients + Tips & Trick */
+.reading-intro{padding:20px;margin:0 0 14px;border:1px solid #f2d5e1;border-radius:18px;background:linear-gradient(135deg,#fff7fa,#ffedf4);box-shadow:0 8px 24px #a85c7810}
+.reading-kicker{display:inline-block;font:700 9px 'DM Sans',sans-serif;letter-spacing:.17em;color:#c45b85}
+.reading-intro h3{font-size:22px!important;color:#49323f!important;margin:8px 0!important}
+.reading-intro p{font-size:12px!important;line-height:1.75!important;margin:0!important}
+.reading-empty{padding:16px;text-align:center;border:1px dashed #eac5d6;border-radius:14px;background:#fffafd}
+#ingredients-list,#tips-content-list{max-height:none!important;overflow:visible!important;display:flex;flex-direction:column;gap:10px}
+#kamus-problem-buttons,#tips-category-buttons{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px!important}
+.reading-card{width:100%;display:flex;flex-direction:column;gap:9px;padding:17px!important;margin:0!important;text-align:left!important;background:linear-gradient(145deg,#fff,#fff5f9)!important;border:1px solid #f1d5e1!important;border-radius:17px!important;color:#49323f!important;cursor:pointer;box-shadow:0 5px 18px #a35c790c;transition:transform .22s,box-shadow .22s,border-color .22s}
+.reading-card:hover{transform:translateY(-2px);border-color:#eab1c9!important;box-shadow:0 12px 26px #a35c7918!important}
+.reading-card-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.reading-card-top strong{font-size:14px!important;color:#9f3e6a!important;line-height:1.5}
+.reading-arrow{display:grid;place-items:center;flex:0 0 28px;width:28px;height:28px;border-radius:9px;background:#ffebf2;color:#c94b7e;font-size:15px}
+.reading-summary{font-size:12px!important;line-height:1.75!important;color:#776671!important}
+.reading-more{font-size:10px;font-weight:700;color:#c14c7c;display:flex;justify-content:space-between;align-items:center;padding-top:7px;border-top:1px solid #f4e2e9}
+.reading-modal-title{font-family:'Playfair Display',serif!important;font-size:25px!important;color:#49323f!important;margin:6px 0 16px!important}
+#modal-details>p{margin:0 0 14px!important;font-size:12px!important;line-height:1.8!important;color:#75616d!important}
+#modal-details>p strong{color:#a33e6b}
+.reading-note,.tip-detail,.tip-caution{padding:12px 13px;border-radius:12px;margin-top:10px;font-size:11px;line-height:1.7}
+.reading-note{background:#fff0f5;border:1px solid #f2d3e0}
+.reading-note>strong,.tip-detail>strong,.tip-caution>strong{font-size:11px;color:#a33e6b}
+.reading-note p,.tip-detail p,.tip-caution p{margin:4px 0 0!important;font-size:11px!important;line-height:1.75!important;color:#776671!important}
+.reading-tip{cursor:default}
+.tip-number{font-size:9px;font-weight:700;letter-spacing:.14em;color:#c45b85}
+.tip-detail{background:#f5f9f0;border:1px solid #dce8d0}
+.tip-detail>strong{color:#547348}
+.tip-caution{background:#fff6ec;border:1px solid #f3dfc8}
+.tip-caution>strong{color:#a3662b}
+#app-modal .modal-content{max-height:85vh;overflow-y:auto}
+@media(max-width:650px){#kamus-problem-buttons,#tips-category-buttons{grid-template-columns:1fr 1fr!important}.reading-intro{padding:16px}.reading-intro h3{font-size:20px!important}.reading-card{padding:15px!important}}
